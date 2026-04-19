@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#512BD4</color>
-    <color name="colorPrimaryDark">#2B0B98</color>
-    <color name="colorAccent">#2B0B98</color>
+    <!-- Document Processing Theme Colors for Android -->
+    <color name="colorPrimary">#2196F3</color><!-- Blue - matches MAUI Primary -->
+    <color name="colorPrimaryDark">#1976D2</color><!-- Darker blue - matches MAUI PrimaryDark -->
+    <color name="colorAccent">#FF9800</color><!-- Orange - matches MAUI Secondary -->
+
+    <!-- Status bar and navigation bar -->
+    <color name="colorPrimaryVariant">#1976D2</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Background colors -->
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorBackground">#FAFAFA</color>
+    <color name="colorOnSurface">#212121</color>
+    <color name="colorOnBackground">#212121</color>
 </resources>
