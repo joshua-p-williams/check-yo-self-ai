@@ -23,6 +23,9 @@ namespace CheckYoSelfAI
             // Configure services
             ConfigureServices(builder);
 
+            // Configure Shell routes and navigation
+            ConfigureShellRoutes();
+
             // Configure ViewModels
             ConfigureViewModels(builder);
 
@@ -122,7 +125,13 @@ namespace CheckYoSelfAI
             // builder.Services.AddTransient<DocumentUploadPage>();
             // builder.Services.AddTransient<DocumentResultsPage>();
 
-            // Note: We'll add these registrations as we create the Views
-        }
-    }
+                }
+
+                private static void ConfigureShellRoutes()
+                {
+                    // Configure Shell navigation routes and parameters
+                    // This sets up additional navigation behaviors beyond what's defined in AppShell.xaml
+                    ShellRouteConfiguration.ConfigureRoutes();
+                }
+            }
 }
