@@ -27,12 +27,12 @@
   - [x] Implement `NormalizedDocument` DTO for unified business data
   - [x] Implement `ConfidenceWarnings` DTO for exception handling
 
-- [ ] **Create service abstractions**
-  - [ ] Create `IDocumentClassifierService` abstraction for `ClassifyDocument`
-  - [ ] Create `ICheckAnalyzerService` abstraction for `AnalyzeCheck`
-  - [ ] Create `IDepositSlipAnalyzerService` abstraction for `AnalyzeDepositSlip`
-  - [ ] Create `IDocumentOrchestrationService` for pipeline coordination
-  - [ ] Define common exception types for pipeline errors
+- [x] **Create service abstractions**
+  - [x] Create `IDocumentClassifierService` abstraction for `ClassifyDocument`
+  - [x] Create `ICheckAnalyzerService` abstraction for `AnalyzeCheck`
+  - [x] Create `IDepositSlipAnalyzerService` abstraction for `AnalyzeDepositSlip`
+  - [x] Create `IDocumentOrchestrationService` for pipeline coordination
+  - [x] Define common exception types for pipeline errors
 
 ### 1.2 MVVM Architecture Setup
 - [ ] **Create base classes**
