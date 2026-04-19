@@ -78,9 +78,7 @@ namespace CheckYoSelfAI
 
             // Navigation and image services (Phase 2)
             builder.Services.AddSingleton<INavigationService, NavigationService>();
-
-            // Image service (Phase 2.3)
-            // builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IImageService, ImageService>();
 
             // Azure AI Document Intelligence client
             // This will be configured when we implement the actual services
