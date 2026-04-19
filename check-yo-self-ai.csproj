@@ -68,6 +68,14 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="Azure.AI.DocumentIntelligence" Version="1.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	</ItemGroup>
+
+	<!-- Platform-specific permissions -->
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<None Remove="Platforms\Android\AndroidManifest.xml" />
+		<AndroidManifest Include="Platforms\Android\AndroidManifest.xml" />
 	</ItemGroup>
 
 </Project>

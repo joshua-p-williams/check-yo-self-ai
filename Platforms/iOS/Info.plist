@@ -28,5 +28,11 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+
+	<!-- Camera and Photo Library Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to capture check and deposit slip images for processing.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app accesses the photo library to select check and deposit slip images for processing.</string>
 </dict>
 </plist>

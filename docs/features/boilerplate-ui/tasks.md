@@ -3,21 +3,21 @@
 ## Phase 1: Document Pipeline Infrastructure (Days 1-2)
 
 ### 1.1 Project Setup
-- [ ] **Update .csproj file**
-  - [ ] Add Azure.AI.DocumentIntelligence NuGet package (v1.0.0+)
-  - [ ] Add CommunityToolkit.Mvvm NuGet package (v8.0.0+)
-  - [ ] Add Microsoft.Extensions.Logging.Debug package
-  - [ ] Configure platform-specific permissions (camera, photo library)
-  - [ ] Set appropriate minimum OS versions
+- [x] **Update .csproj file**
+  - [x] Add Azure.AI.DocumentIntelligence NuGet package (v1.0.0+)
+  - [x] Add CommunityToolkit.Mvvm NuGet package (v8.3.0+)
+  - [x] Add Microsoft.Extensions.Logging.Debug package
+  - [x] Configure platform-specific permissions (camera, photo library)
+  - [x] Set appropriate minimum OS versions
 
-- [ ] **Create document pipeline folder structure**
-  - [ ] Create `Views/` folder for XAML pages
-  - [ ] Create `ViewModels/` folder for view models
-  - [ ] Create `Services/` folder with `Interfaces/` subfolder
-  - [ ] Create `Models/` folder with pipeline DTOs
-  - [ ] Create `Pipeline/` folder for orchestration logic
-  - [ ] Create `Controls/` folder for document UI components
-  - [ ] Create `Converters/` folder for value converters
+- [x] **Create document pipeline folder structure**
+  - [x] Create `Views/` folder for XAML pages
+  - [x] Create `ViewModels/` folder for view models
+  - [x] Create `Services/` folder with `Interfaces/` subfolder
+  - [x] Create `Models/` folder with pipeline DTOs
+  - [x] Create `Pipeline/` folder for orchestration logic
+  - [x] Create `Controls/` folder for document UI components
+  - [x] Create `Converters/` folder for value converters
 
 ### 1.2 Document Pipeline Contracts
 - [ ] **Create pipeline DTOs**
