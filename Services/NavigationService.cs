@@ -121,7 +121,8 @@ public class NavigationService : INavigationService
             var currentPage = GetCurrentPage();
             if (currentPage != null)
             {
-                await currentPage.DisplayAlert(title, message, cancel);
+                // Use the async version to avoid the obsolete warning
+                await currentPage.DisplayAlertAsync(title, message, cancel);
             }
             else
             {
@@ -157,7 +158,7 @@ public class NavigationService : INavigationService
             var currentPage = GetCurrentPage();
             if (currentPage != null)
             {
-                var result = await currentPage.DisplayAlert(title, message, accept, cancel);
+                var result = await currentPage.DisplayAlertAsync(title, message, accept, cancel);
                 _logger.LogDebug("Confirmation alert result: {Result} for title: {Title}", result, title);
                 return result;
             }
@@ -191,7 +192,7 @@ public class NavigationService : INavigationService
             var currentPage = GetCurrentPage();
             if (currentPage != null)
             {
-                var result = await currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
+                var result = await currentPage.DisplayActionSheetAsync(title, cancel, destruction, buttons);
                 _logger.LogDebug("Action sheet result: {Result} for title: {Title}", result ?? "null", title);
                 return result;
             }
