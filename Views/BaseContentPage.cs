@@ -249,7 +249,7 @@ public abstract class BaseContentPage<TViewModel> : ContentPage, IDisposable
             _logger?.LogDebug("Showing error dialog: {Message} (Exception: {ExceptionType})", message, exception.GetType().Name);
         }
 
-        await DisplayAlert(title, message, okButton);
+        await this.DisplayAlert(title, message, okButton);
     }
 
     #endregion

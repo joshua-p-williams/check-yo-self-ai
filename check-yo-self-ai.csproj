@@ -28,10 +28,10 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>check-yo-self-ai</ApplicationTitle>
+		<ApplicationTitle>CheckYoSelfAI</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.checkyoselfai</ApplicationId>
+		<ApplicationId>com.checkyoselfai.documentprocessor</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
