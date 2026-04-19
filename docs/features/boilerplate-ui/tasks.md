@@ -35,11 +35,11 @@
   - [x] Define common exception types for pipeline errors
 
 ### 1.2 MVVM Architecture Setup
-- [ ] **Create base classes**
-  - [ ] Implement `BaseViewModel` with INotifyPropertyChanged
-  - [ ] Add common properties (IsBusy, Title, IsInitialized)
-  - [ ] Implement virtual InitializeAsync method
-  - [ ] Add error handling and logging support
+- [x] **Create base classes**
+  - [x] Implement `BaseViewModel` with INotifyPropertyChanged
+  - [x] Add common properties (IsBusy, Title, IsInitialized)
+  - [x] Implement virtual InitializeAsync method
+  - [x] Add error handling and logging support
 
 - [ ] **Create BaseContentPage**
   - [ ] Generic base class with ViewModel binding
