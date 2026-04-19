@@ -20,12 +20,12 @@
   - [x] Create `Converters/` folder for value converters
 
 ### 1.2 Document Pipeline Contracts
-- [ ] **Create pipeline DTOs**
-  - [ ] Implement `DocumentInput` DTO with metadata and content
-  - [ ] Implement `ClassificationResult` DTO with type and confidence  
-  - [ ] Implement `ExtractionResult` DTO for raw model outputs
-  - [ ] Implement `NormalizedDocument` DTO for unified business data
-  - [ ] Implement `ConfidenceWarnings` DTO for exception handling
+- [x] **Create pipeline DTOs**
+  - [x] Implement `DocumentInput` DTO with metadata and content
+  - [x] Implement `ClassificationResult` DTO with type and confidence  
+  - [x] Implement `ExtractionResult` DTO for raw model outputs
+  - [x] Implement `NormalizedDocument` DTO for unified business data
+  - [x] Implement `ConfidenceWarnings` DTO for exception handling
 
 - [ ] **Create service abstractions**
   - [ ] Create `IDocumentClassifierService` abstraction for `ClassifyDocument`
