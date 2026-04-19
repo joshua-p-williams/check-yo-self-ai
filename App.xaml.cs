@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace check_yo_self_ai
+namespace CheckYoSelfAI
 {
     public partial class App : Application
     {

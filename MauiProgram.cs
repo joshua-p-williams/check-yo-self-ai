@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using check_yo_self_ai.Services.Interfaces;
-using check_yo_self_ai.ViewModels;
-using check_yo_self_ai.Views;
+using CheckYoSelfAI.Services.Interfaces;
+using CheckYoSelfAI.Services;
 
-namespace check_yo_self_ai
+namespace CheckYoSelfAI
 {
     public static class MauiProgram
     {
@@ -72,8 +71,9 @@ namespace check_yo_self_ai
             // builder.Services.AddScoped<IDepositSlipAnalyzerService, DepositSlipAnalyzerService>();
 
             // Settings and configuration services
-            // These will be implemented in Phase 2
-            // builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
+            // Navigation and image services (Phase 2)
             // builder.Services.AddScoped<INavigationService, NavigationService>();
             // builder.Services.AddScoped<IImageService, ImageService>();
 

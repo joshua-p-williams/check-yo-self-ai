@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace check_yo_self_ai
+namespace CheckYoSelfAI
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

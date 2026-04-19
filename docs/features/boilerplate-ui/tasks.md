@@ -62,12 +62,12 @@
   - [x] Define ContainsKeyAsync method for key existence check
   - [x] Define RemoveAsync method for value removal
 
-- [ ] **Implement SettingsService**
-  - [ ] Use MAUI Preferences API for simple settings
-  - [ ] Use SecureStorage for sensitive data (API keys)
-  - [ ] Add JSON serialization for complex objects
-  - [ ] Implement proper error handling and logging
-  - [ ] Add validation for setting values
+- [x] **Implement SettingsService**
+  - [x] Use MAUI Preferences API for simple settings
+  - [x] Use SecureStorage for sensitive data (API keys)
+  - [x] Add JSON serialization for complex objects
+  - [x] Implement proper error handling and logging
+  - [x] Add validation for setting values
 
 - [x] **Create settings model classes**
   - [x] Create `AzureSettings` class with Endpoint and ApiKey

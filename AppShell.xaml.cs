@@ -1,4 +1,4 @@
-﻿namespace check_yo_self_ai
+﻿namespace CheckYoSelfAI
 {
     public partial class AppShell : Shell
     {

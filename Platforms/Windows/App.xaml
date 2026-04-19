@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="check_yo_self_ai.WinUI.App"
+    x:Class="CheckYoSelfAI.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:check_yo_self_ai.WinUI">
+    xmlns:local="using:CheckYoSelfAI.WinUI">
 
 </maui:MauiWinUIApplication>
