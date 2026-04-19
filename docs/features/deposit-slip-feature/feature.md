@@ -1,53 +1,120 @@
-# Feature 3: Deposit Slip Processing Feature
+# Feature 4: Custom Neural Extraction for Variable-Layout Deposit Slips (Post-Classification)
 
 ## Overview
 
-This feature implements deposit slip processing using Azure AI Document Intelligence custom models. Unlike bank checks which use a prebuilt model, deposit slips require custom trained models due to the variety of formats across different banks and financial institutions. This feature builds upon the processing infrastructure established in the check feature while adding custom model management and training capabilities.
+This feature implements **custom neural extraction for variable-layout deposit slips after routing**. Deposit slips vary significantly by bank and branch, making them ideal candidates for Azure's **custom neural model** approach. This feature is invoked only after classification identifies the document as a deposit slip, and it uses custom trained models to extract common business fields across layout variants.
 
 ## Goals
 
-- Implement custom model processing for deposit slip documents
-- Provide model management and configuration capabilities
-- Extend results display framework for deposit slip data
-- Maintain consistent user experience with check processing
-- Support multiple custom models for different deposit slip formats
+- Process documents already classified as deposit slips
+- Use Azure's **custom neural model** for variable-layout extraction
+- Extract consistent business fields across different bank/branch formats  
+- Handle layout diversity through neural model training
+- Map custom model outputs to normalized teller-document schema
+- Support retraining for new institution variants
 
 ## User Stories
 
-### US3.1: Custom Model Configuration
-**As a** user  
-**I want** to configure custom models for deposit slip processing  
-**So that** I can process deposit slips from different banks and formats
+### US4.1: Custom Neural Model Training
+**As a** developer  
+**I want** to train custom neural models for deposit slip variations  
+**So that** I can extract consistent fields across different bank layouts
 
 **Acceptance Criteria:**
-- Settings page includes custom model configuration section
-- Support for multiple custom models with descriptive names
-- Model validation and testing capabilities
-- Model selection interface for processing
-- Import/export of model configurations
+- Collect representative deposit slips across multiple banks/branches
+- Label the same conceptual fields consistently across layout variants
+- Train and test as **custom neural** model (not template-based)
+- Expect and handle significant layout diversity  
+- Support model versioning and retraining workflows
 
-### US3.2: Deposit Slip Processing
-**As a** user  
-**I want** to process deposit slip images using custom models  
-**So that** I can extract deposit information automatically
-
-**Acceptance Criteria:**
-- Upload and process deposit slip images
-- Select appropriate custom model for processing
-- Display processing status with custom model feedback
-- Handle custom model errors and limitations
-- Support various deposit slip formats and layouts
-
-### US3.3: Deposit-Specific Results Display
-**As a** user  
-**I want** to view extracted deposit slip data in structured format  
-**So that** I can understand and validate the processed information
+### US4.2: Custom Model Integration (Post-Classification)
+**As a** developer  
+**I want** to integrate custom neural models into the document pipeline  
+**So that** deposit slips are processed using specialized trained models after classification
 
 **Acceptance Criteria:**
-- Deposit-specific formatted view with relevant fields
-- JSON view showing raw custom model response
-- Confidence scores and field validation indicators
-- Visual overlay showing extracted field locations
+- Receive documents already classified as deposit slip type
+- Use trained custom neural model for extraction
+- Handle model confidence scoring and field validation
+- Return structured extraction results with business field mapping
+- Support model versioning and updates without code changes
+
+### US4.3: Cross-Layout Field Extraction
+**As a** user  
+**I want** to extract consistent business fields from deposit slips regardless of bank layout  
+**So that** I can process deposit slips from different institutions uniformly
+
+**Acceptance Criteria:**
+- Extract common deposit slip fields (account numbers, amounts, dates, deposit items)
+- Handle cash vs. check deposit line items correctly
+- Process totals and subtotals with validation
+- Map varied field layouts to consistent business schema
+- Provide confidence scoring for extracted business fields
+
+### US4.4: Layout Variance Handling  
+**As a** user  
+**I want** appropriate confidence indicators when processing deposit slips from new layouts  
+**So that** I can identify when retraining might be needed
+
+**Acceptance Criteria:**
+- Detect when extraction confidence is unusually low
+- Identify field patterns that don't match training data
+- Suggest when new layout samples should be collected
+- Provide feedback for model improvement workflows
+- Handle graceful degradation for unsupported layouts
+
+## Technical Specifications
+
+### Custom Neural Model Training Strategy
+
+The deposit slip feature uses custom neural models with these design principles:
+
+- **Layout diversity expectation**: Train across multiple bank/branch formats from the start
+- **Consistent field labeling**: Label the same conceptual business fields across all layout variants  
+- **Neural-first approach**: Use custom neural model capabilities, not template-first assumptions
+- **Retraining capability**: Support sub-variants and retraining when institutions differ materially
+
+### Deposit Slip Field Schema
+
+Common business fields extracted across layout variants:
+
+```csharp
+public class DepositSlipFields
+{
+    // Account information
+    public string AccountNumber { get; set; }
+    public string AccountHolderName { get; set; }
+    public DateTime DepositDate { get; set; }
+
+    // Deposit items
+    public List<DepositItem> CheckDeposits { get; set; }
+    public decimal CashAmount { get; set; }
+    public decimal TotalCheckAmount { get; set; }
+    public decimal NetDepositAmount { get; set; }
+
+    // Validation fields
+    public string DepositSlipNumber { get; set; }
+    public string BankName { get; set; }
+    public string BranchLocation { get; set; }
+}
+
+public class DepositItem  
+{
+    public string CheckNumber { get; set; }
+    public decimal Amount { get; set; }
+    public string BankRoutingNumber { get; set; }
+    public double Confidence { get; set; }
+}
+```
+
+## Documentation References
+
+### Custom Neural Model Training
+- **Custom Neural**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/train/custom-neural?view=doc-intel-4.0.0
+- **Custom Model Build Guide**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/build-a-custom-model?view=doc-intel-4.0.0
+- **Service Limits**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/service-limits?view=doc-intel-4.0.0
+
+These matter because Microsoft positions custom neural for cases where documents contain similar information across different layouts, and the build/service-limit docs help plan the demo's training and testing work realistically.
 - Comparison view for multiple deposit items
 
 ### US3.4: Model Training Integration

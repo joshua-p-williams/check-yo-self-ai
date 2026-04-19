@@ -1,8 +1,26 @@
-# Development Plan: Check Processing Feature
+# Development Plan: US Bank Check Extraction (Post-Classification)
 
 ## Overview
 
-This plan outlines the implementation of bank check processing using Azure AI Document Intelligence's prebuilt bank check model. The development will build upon the foundation established in Feature 1 and create a complete check processing workflow from image upload to results display.
+This plan outlines the implementation of US bank check extraction that operates **downstream of classification**. The feature receives documents already identified as checks and focuses on specialized extraction using Azure's `prebuilt-check.us` model. This is not a standalone upload-to-result workflow, but rather a component in the document orchestration pipeline.
+
+## Processing Assumptions
+
+The check feature operates under these key assumptions:
+
+- **Input expectation**: Documents are already classified as US bank checks
+- **Model used**: `prebuilt-check.us` (Azure's prebuilt US bank check model)  
+- **Tolerance for classification mistakes**: Must show warnings if extraction is weak or critical fields are missing
+- **Output normalization**: Maps raw Azure output to internal teller-document schema fields (amount, date, payer/payee, routing/account/check number)
+- **No upload ownership**: Does not own upload decision logic, only check extraction, result mapping, and check-specific display
+
+## Architecture Considerations
+
+- Classification happens before extraction
+- Checks use **prebuilt** extraction (`prebuilt-check.us`)
+- Routing belongs in the application layer  
+- Low-confidence outcomes should not silently pass as successful processing
+- All outputs should be normalized into a shared teller-document result shape
 
 ## Implementation Strategy
 

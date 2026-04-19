@@ -1,52 +1,113 @@
-# Tasks: Deposit Slip Processing Feature
+# Tasks: Custom Neural Deposit Slip Extraction (Post-Classification)
 
-## Phase 1: Model Management Infrastructure (Days 1-2)
+## Phase 1: Custom Neural Model Training Preparation (Days 1-3)
 
-### 1.1 Custom Model Service Implementation
-- [ ] **Create ICustomModelService interface**
-  - [ ] Define GetAvailableModelsAsync method for model discovery
-  - [ ] Define GetModelAsync method for individual model retrieval
-  - [ ] Define ValidateModelAsync method for model validation
-  - [ ] Define RegisterModelAsync method for model registration
-  - [ ] Define DeleteModelAsync method for model removal
-  - [ ] Define GetModelCapabilitiesAsync for capability discovery
+### 1.1 Define Deposit-Slip Field Schema for Labeling
+- [ ] **Design consistent business field schema**
+  - [ ] Define account information fields (account number, holder name, branch)
+  - [ ] Specify deposit item fields (check amounts, cash amounts, totals)
+  - [ ] Create transaction metadata fields (date, slip number, bank info)
+  - [ ] Add validation fields for business rule checking
+  - [ ] Document field relationships and dependencies
 
-- [ ] **Implement CustomModelService class**
-  - [ ] Set up Azure DocumentIntelligenceClient for model operations
-  - [ ] Implement model discovery through Azure API
-  - [ ] Add model validation with test processing calls
-  - [ ] Create model registration with metadata storage
-  - [ ] Implement model capability analysis and caching
-  - [ ] Add proper error handling and logging
+- [ ] **Create labeling guidelines**
+  - [ ] Establish consistent naming conventions across layouts
+  - [ ] Define field extraction boundaries and rules
+  - [ ] Create examples of field variations across banks
+  - [ ] Document edge cases and special handling requirements
+  - [ ] Prepare training guidelines for consistent labeling
 
-- [ ] **Create custom model data models**
-  - [ ] Create CustomModel class with Azure metadata
-  - [ ] Define ModelCapabilities class for feature tracking
-  - [ ] Create ModelStatus enum for training/ready states
-  - [ ] Add ModelConfiguration class for settings storage
-  - [ ] Implement validation attributes and business rules
+### 1.2 Gather Representative Deposit-Slip Samples Across Layout Variants
+- [ ] **Collect diverse deposit slip samples**
+  - [ ] Gather samples from multiple major banks (Chase, BofA, Wells Fargo, etc.)
+  - [ ] Collect regional and community bank variations
+  - [ ] Include different branch-specific layouts within same banks
+  - [ ] Sample both personal and business deposit slip formats
+  - [ ] Collect samples with varying completeness and quality
 
-### 1.2 Settings Framework Extension
-- [ ] **Extend settings service for custom models**
-  - [ ] Add custom model configuration storage methods
-  - [ ] Implement model list serialization and persistence
-  - [ ] Create default model selection management
-  - [ ] Add model validation settings and thresholds
-  - [ ] Implement import/export functionality for model configs
+- [ ] **Organize sample collection**
+  - [ ] Create bank/branch categorization system
+  - [ ] Document layout characteristics for each sample
+  - [ ] Identify common field patterns across variants
+  - [ ] Note unique layout features requiring special handling
+  - [ ] Prepare samples for labeling workflow
 
-- [ ] **Update SettingsPage for model management**
-  - [ ] Add custom models section to settings page
-  - [ ] Create model list display with add/edit/delete actions
-  - [ ] Implement model selection interface with descriptions
-  - [ ] Add model testing and validation UI
-  - [ ] Include model import/export functionality
+### 1.3 Label Deposit-Slip Training Set
+- [ ] **Create consistent field labeling**
+  - [ ] Apply business field schema consistently across all layouts
+  - [ ] Label the same conceptual fields despite layout differences
+  - [ ] Handle missing fields gracefully in various layouts
+  - [ ] Document labeling decisions for complex cases
+  - [ ] Validate labeling consistency across sample set
 
-- [ ] **Create model configuration validation**
-  - [ ] Validate model ID format and Azure compatibility
-  - [ ] Check model availability and accessibility
-  - [ ] Validate model capabilities against requirements
-  - [ ] Test model processing with sample documents
-  - [ ] Provide detailed validation feedback to users
+- [ ] **Prepare training data structure**
+  - [ ] Organize labeled samples for Azure custom model training
+  - [ ] Split samples into training and validation sets
+  - [ ] Document expected extraction results for validation
+  - [ ] Create test scenarios for model evaluation
+  ## Phase 2: Custom Neural Model Training and Testing (Days 4-6)
+
+  ### 2.1 Train Custom Neural Model
+  - [ ] **Set up Azure custom model training**
+    - [ ] Configure Azure Document Intelligence studio for training
+    - [ ] Upload labeled training dataset to Azure blob storage
+    - [ ] Configure custom neural model training parameters
+    - [ ] Monitor training progress and evaluate intermediate results
+    - [ ] Validate model performance against held-out test set
+
+  - [ ] **Test Model Against Unseen Branch/Bank Layouts**
+    - [ ] Reserve unseen bank/branch samples for final testing
+    - [ ] Test model performance on completely new layout variants
+    - [ ] Evaluate field extraction accuracy across different layouts
+    - [ ] Document model limitations and edge cases
+    - [ ] Identify scenarios requiring model retraining
+
+  ### 2.2 Implement Analyzer Service for Deposit-Slip Model
+  - [ ] **Create IDepositSlipAnalyzerService interface**
+    - [ ] Define AnalyzeDepositSlipAsync method accepting DocumentInput
+    - [ ] Return ExtractionResult DTO with custom model response
+    - [ ] Add confidence scoring and field-level validation
+    - [ ] Include error handling for custom model failures
+    - [ ] Support model versioning and selection
+
+  - [ ] **Implement DepositSlipAnalyzerService class**
+    - [ ] Configure Azure client for custom model processing
+    - [ ] Process pre-classified deposit slip documents only
+    - [ ] Extract deposit slip fields using trained custom neural model
+    - [ ] Map custom model response to ExtractionResult DTO
+    - [ ] Implement proper error handling and confidence reporting
+
+  ### 2.3 Build Raw-to-Normalized Deposit-Slip Mapping
+  - [ ] **Design deposit slip field normalization**
+    - [ ] Map custom model output to NormalizedDocument schema
+    - [ ] Handle deposit item arrays and transaction lists
+    - [ ] Process cash vs. check amounts with validation
+    - [ ] Extract account information with format validation
+    - [ ] Preserve field-level confidence scores
+
+  - [ ] **Implement DepositSlipMappingService**
+    - [ ] Create mapping logic from custom model response to normalized fields
+    - [ ] Add business rule validation for deposit totals and items
+    - [ ] Handle missing or low-confidence deposit slip fields
+    - [ ] Generate processing warnings for data inconsistencies
+    - [ ] Support different custom model versions and outputs
+
+  ## Phase 3: Confidence and Exception Handling (Days 7-8)
+
+  ### 3.1 Add Confidence and Exception Handling for Weak Extraction
+  - [ ] **Design confidence assessment for custom models**
+    - [ ] Define acceptable confidence thresholds for deposit slip fields
+    - [ ] Create validation rules for critical deposit slip data
+    - [ ] Implement overall extraction quality scoring
+    - [ ] Add detection for unusually low-confidence results
+    - [ ] Create feedback mechanisms for model improvement
+
+  - [ ] **Implement exception handling workflows**  
+    - [ ] Handle custom model processing failures gracefully
+    - [ ] Provide clear messaging for extraction quality issues
+    - [ ] Add fallback options for weak or partial extractions
+    - [ ] Create user feedback collection for model retraining
+    - [ ] Implement retry mechanisms with different parameters
 
 ### 1.3 Model Management UI
 - [ ] **Create ModelManagementPage.xaml**

@@ -1,6 +1,6 @@
-# Tasks: Boilerplate and UI Foundation
+# Tasks: Document Orchestration Foundation
 
-## Phase 1: Project Infrastructure (Days 1-2)
+## Phase 1: Document Pipeline Infrastructure (Days 1-2)
 
 ### 1.1 Project Setup
 - [ ] **Update .csproj file**
@@ -10,13 +10,29 @@
   - [ ] Configure platform-specific permissions (camera, photo library)
   - [ ] Set appropriate minimum OS versions
 
-- [ ] **Create folder structure**
+- [ ] **Create document pipeline folder structure**
   - [ ] Create `Views/` folder for XAML pages
   - [ ] Create `ViewModels/` folder for view models
   - [ ] Create `Services/` folder with `Interfaces/` subfolder
-  - [ ] Create `Models/` folder for data models
-  - [ ] Create `Controls/` folder for custom UI components
+  - [ ] Create `Models/` folder with pipeline DTOs
+  - [ ] Create `Pipeline/` folder for orchestration logic
+  - [ ] Create `Controls/` folder for document UI components
   - [ ] Create `Converters/` folder for value converters
+
+### 1.2 Document Pipeline Contracts
+- [ ] **Create pipeline DTOs**
+  - [ ] Implement `DocumentInput` DTO with metadata and content
+  - [ ] Implement `ClassificationResult` DTO with type and confidence  
+  - [ ] Implement `ExtractionResult` DTO for raw model outputs
+  - [ ] Implement `NormalizedDocument` DTO for unified business data
+  - [ ] Implement `ConfidenceWarnings` DTO for exception handling
+
+- [ ] **Create service abstractions**
+  - [ ] Create `IDocumentClassifierService` abstraction for `ClassifyDocument`
+  - [ ] Create `ICheckAnalyzerService` abstraction for `AnalyzeCheck`
+  - [ ] Create `IDepositSlipAnalyzerService` abstraction for `AnalyzeDepositSlip`
+  - [ ] Create `IDocumentOrchestrationService` for pipeline coordination
+  - [ ] Define common exception types for pipeline errors
 
 ### 1.2 MVVM Architecture Setup
 - [ ] **Create base classes**
@@ -111,26 +127,48 @@
   - [ ] Set up platform-specific styling overrides
   - [ ] Configure accessibility labels and hints
 
-### 3.2 Main Page Implementation
-- [ ] **Create MainPage.xaml layout**
-  - [ ] Add header with app title and settings button
-  - [ ] Create central upload area with drag-drop visual cues
-  - [ ] Add image preview section (initially hidden)
-  - [ ] Include process button with loading states
-  - [ ] Add status indicator for processing feedback
+### 3.2 Document Processing Components
+- [ ] **Create upload component for image input**
+  - [ ] Build camera capture and file selection interface
+  - [ ] Support image formats (JPEG, PNG)
+  - [ ] Add file validation and size limits
+  - [ ] Implement preview functionality
+  - [ ] Add image metadata display
 
-- [ ] **Create MainPageViewModel**
-  - [ ] Implement UploadImageCommand for image selection
-  - [ ] Add ImagePreview property for binding
-  - [ ] Implement ProcessDocumentCommand (placeholder)
-  - [ ] Add validation for processing prerequisites
-  - [ ] Handle navigation to results page
+- [ ] **Create processing timeline/status component**
+  - [ ] Design multi-stage progress indicator
+  - [ ] Show upload → classify → route → extract → normalize steps
+  - [ ] Add timing information for each stage
+  - [ ] Display current processing stage with animations
+  - [ ] Handle error states in timeline
 
-- [ ] **Implement image preview functionality**
-  - [ ] Create ImagePreview custom control
-  - [ ] Add zoom and pan gesture support
-  - [ ] Implement image loading with placeholder
-  - [ ] Add image information display (size, format)
+- [ ] **Create classification result card**
+  - [ ] Display identified document type with confidence
+  - [ ] Show alternative classification options
+  - [ ] Add confidence visualization (progress bars/colors)
+  - [ ] Include reasoning details when available
+  - [ ] Allow manual override for incorrect classification
+
+- [ ] **Create routed-model indicator**  
+  - [ ] Show which extraction model was selected
+  - [ ] Display model version and capabilities
+  - [ ] Indicate routing decision reasoning
+  - [ ] Show expected extraction fields for selected model
+  - [ ] Add link to model documentation
+
+- [ ] **Create normalized result view**
+  - [ ] Design model-agnostic result display
+  - [ ] Support both check and deposit slip fields
+  - [ ] Show extracted values with confidence scores
+  - [ ] Add raw vs. formatted result toggle
+  - [ ] Include export and sharing capabilities
+
+- [ ] **Create low-confidence / unsupported-document warning state**
+  - [ ] Design clear warning messaging
+  - [ ] Provide recovery options and suggestions
+  - [ ] Show confidence thresholds and explanations
+  - [ ] Add manual review workflow triggers
+  - [ ] Include fallback processing options
 
 ### 3.3 Settings Page Implementation
 - [ ] **Create SettingsPage.xaml layout**

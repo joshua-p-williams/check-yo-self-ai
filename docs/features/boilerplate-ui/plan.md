@@ -1,8 +1,38 @@
-# Development Plan: Boilerplate and UI Foundation
+# Development Plan: Document Orchestration Foundation
 
 ## Overview
 
-This plan outlines the implementation approach for establishing the core infrastructure and user interface foundation of the Check Yo Self AI application. The development will follow an incremental approach, building from basic project setup to a complete, testable UI foundation.
+This plan outlines the implementation approach for establishing the core infrastructure and user interface foundation of the Check Yo Self AI application as a **document orchestration shell**. The development will follow an incremental approach, building from basic project setup to a complete document processing pipeline that supports upload → classify → route → extract → normalize → display workflows.
+
+## Shared Pipeline Contracts
+
+The UI must support a standardized contract system that allows document classification, routing, and extraction to evolve independently. All pipeline stages communicate through well-defined DTOs:
+
+### Core Pipeline DTOs
+
+1. **Input Document DTO** - Standardizes incoming document representation
+2. **Classifier Result DTO** - Contains document type and confidence from classification
+3. **Extraction Result DTO** - Raw outputs from any extraction model (check/deposit slip)
+4. **Normalized Domain DTO** - Unified business representation regardless of source model
+5. **Confidence / Warnings DTO** - Exception handling and confidence reporting
+
+### Service Abstractions
+
+The UI should be agnostic to which extractor runs, because checks and deposit slips will produce different raw outputs but should be displayed through a common normalized view. Key service abstractions:
+
+- `IDocumentClassifierService.ClassifyDocument()` 
+- `ICheckAnalyzerService.AnalyzeCheck()`
+- `IDepositSlipAnalyzerService.AnalyzeDepositSlip()`
+
+## Architecture Considerations
+
+- This demo is a **mixed-document intake** scenario, not a single-model scenario
+- Classification happens before extraction  
+- Checks use **prebuilt** extraction (`prebuilt-check.us`)
+- Deposit slips use **custom neural** extraction
+- Routing belongs in the application layer
+- Low-confidence outcomes should not silently pass as successful processing
+- All outputs should be normalized into a shared teller-document result shape
 
 ## Implementation Strategy
 

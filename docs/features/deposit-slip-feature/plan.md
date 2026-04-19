@@ -1,8 +1,26 @@
-# Development Plan: Deposit Slip Processing Feature
+# Development Plan: Custom Neural Deposit Slip Extraction (Post-Classification)
 
 ## Overview
 
-This plan outlines the implementation of deposit slip processing using Azure AI Document Intelligence custom models. The development builds upon the check processing infrastructure while adding custom model management, document classification, and deposit-specific result handling.
+This plan outlines the implementation of deposit slip extraction using Azure's **custom neural models** for variable-layout documents. The development focuses on training strategies, model integration, and cross-layout field extraction capabilities for deposit slips that vary significantly across banks and branches.
+
+## Training Strategy Design Notes
+
+The deposit slip feature requires a custom neural training approach:
+
+- **Collect representative samples**: Gather deposit slips across multiple banks/branches proactively
+- **Label consistently**: Label the same conceptual fields consistently across all layout variants
+- **Expect layout diversity**: Design for significant format differences from the start
+- **Train neural-first**: Use custom neural model capabilities, not template-first assumptions
+- **Plan for retraining**: Support sub-variants and retraining when institutions differ materially
+
+## Architecture Considerations  
+
+- Classification happens before extraction
+- Deposit slips use **custom neural** extraction  
+- Routing belongs in the application layer
+- Low-confidence outcomes should not silently pass as successful processing
+- All outputs should be normalized into a shared teller-document result shape
 
 ## Implementation Strategy
 

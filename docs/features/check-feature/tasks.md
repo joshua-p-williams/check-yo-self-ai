@@ -1,52 +1,96 @@
-# Tasks: Check Processing Feature
+# Tasks: US Bank Check Extraction (Post-Classification)
 
-## Phase 1: Azure Integration Setup (Days 1-2)
+## Phase 1: Check Analyzer Service (Days 1-2)
 
-### 1.1 Azure Document Intelligence Client Setup
-- [ ] **Create IDocumentIntelligenceService interface**
-  - [ ] Define TestConnectionAsync method for credential validation
-  - [ ] Define ProcessCheckAsync method with cancellation token support
-  - [ ] Define GetProcessingStatusAsync for operation tracking
-  - [ ] Define CancelProcessingAsync for operation cancellation
-  - [ ] Add proper exception handling definitions
+### 1.1 Implement Check Analyzer Service using `prebuilt-check.us`
+- [ ] **Create ICheckAnalyzerService interface**
+  - [ ] Define AnalyzeCheckAsync method that accepts DocumentInput
+  - [ ] Return ExtractionResult DTO with raw Azure response
+  - [ ] Add confidence scoring and field-level validation
+  - [ ] Include error handling for extraction failures
+  - [ ] Support cancellation tokens for long-running operations
 
-- [ ] **Implement DocumentIntelligenceService class**
-  - [ ] Set up Azure DocumentIntelligenceClient initialization
-  - [ ] Implement credential validation using settings service
-  - [ ] Add proper logging and error handling
-  - [ ] Configure client options (timeouts, retry policies)
-  - [ ] Implement IDisposable for proper resource cleanup
+- [ ] **Implement CheckAnalyzerService class**
+  - [ ] Configure Azure DocumentIntelligenceClient for `prebuilt-check.us`
+  - [ ] Process pre-classified check documents only
+  - [ ] Extract check fields: amount, date, payer/payee, routing/account/check numbers
+  - [ ] Map Azure response to ExtractionResult DTO
+  - [ ] Implement proper error handling and logging
 
-- [ ] **Configure Azure client authentication**
-  - [ ] Retrieve Azure settings from settings service
-  - [ ] Create AzureKeyCredential from stored API key
-  - [ ] Validate endpoint URL format and accessibility
-  - [ ] Implement connection testing with basic API call
-  - [ ] Handle authentication failures with clear error messages
+### 1.2 Create Raw-to-Normalized Check Mapping  
+- [ ] **Design normalized check fields mapping**
+  - [ ] Map Azure check fields to NormalizedDocument schema
+  - [ ] Handle amount formatting and currency conversion
+  - [ ] Parse and validate dates from various check formats  
+  - [ ] Extract and validate routing/account number formats
+  - [ ] Process payee/payer name fields with confidence
 
-### 1.2 Core Processing Models
-- [ ] **Create CheckResult model**
-  - [ ] Add all prebuilt-bankCheck model fields (check number, amount, pay to, date, memo)
-  - [ ] Add bank information fields (routing number, account number, bank name)
-  - [ ] Include signature detection and confidence scores
-  - [ ] Add processing metadata (document ID, processed timestamp)
-  - [ ] Store raw JSON response for JSON view
+- [ ] **Implement CheckMappingService**
+  - [ ] Create mapping logic from raw Azure response to normalized fields
+  - [ ] Add field-level confidence preservation
+  - [ ] Handle missing or low-confidence fields gracefully  
+  - [ ] Validate extracted data against business rules
+  - [ ] Generate processing warnings for data quality issues
 
-- [ ] **Create ProcessingStatus model**
-  - [ ] Define ProcessingState enum (NotStarted, Processing, Completed, Failed, Cancelled)
-  - [ ] Add status tracking properties (ID, state, message, progress percentage)
-  - [ ] Include timing information (started, completed timestamps)
-  - [ ] Add error message and retry count tracking
-  - [ ] Implement progress calculation logic
+### 1.3 Add Sample Teller-Capture Check Test Files
+- [ ] **Collect representative check samples**
+  - [ ] Gather various US bank check formats and layouts
+  - [ ] Include skewed and imperfect teller-capture scenarios
+  - [ ] Add checks with different handwriting and print qualities
+  - [ ] Collect checks with various amounts and date formats
+  - [ ] Include edge cases: damaged, partially obscured checks
 
-- [ ] **Create error handling models**
-  - [ ] Define ProcessingException with Azure error code mapping
-  - [ ] Create user-friendly error message mappings
-  - [ ] Add validation error models for image and settings
-  - [ ] Define retry policies for different error types
-  - [ ] Implement error logging and diagnostic information
+- [ ] **Create test data structure**
+  - [ ] Organize sample files by quality and complexity  
+  - [ ] Document expected extraction results for each sample
+  - [ ] Add metadata about scan quality and expected confidence
+  - [ ] Create test scenarios for validation workflows
+  ## Phase 2: Check-Specific Result Display (Days 3-4)
 
-### 1.3 Settings Integration
+  ### 2.1 Create Confidence-Aware Result Display
+  - [ ] **Design check result UI components**
+    - [ ] Create check-specific field layout (amount, date, payee, etc.)
+    - [ ] Add confidence visualization for each extracted field
+    - [ ] Implement color coding for confidence levels (high/medium/low)
+    - [ ] Show field-level warnings for low-confidence extractions
+    - [ ] Add tooltips explaining confidence scores and warnings
+
+  - [ ] **Implement CheckResultsViewModel**
+    - [ ] Bind to NormalizedDocument check fields
+    - [ ] Display confidence scores with visual indicators
+    - [ ] Handle missing or failed field extractions
+    - [ ] Implement raw JSON toggle for technical view
+    - [ ] Add export functionality for check results
+
+  ### 2.2 Add Fallback Warning for Weak or Partial Extraction
+  - [ ] **Design extraction quality validation**
+    - [ ] Define critical check fields that must be present (amount, date)
+    - [ ] Set confidence thresholds for acceptable extraction quality
+    - [ ] Create validation rules for check field formats
+    - [ ] Implement overall extraction confidence scoring
+    - [ ] Add business logic validation (reasonable amounts, valid dates)
+
+  - [ ] **Create warning and fallback UI**
+    - [ ] Design warning cards for low-confidence results
+    - [ ] Add explanatory text for extraction failures
+    - [ ] Provide suggestions for re-scanning or manual entry
+    - [ ] Include feedback options for misclassified documents
+    - [ ] Add manual review workflow triggers
+
+  ### 2.3 Validate Result Rendering for Skewed / Imperfect Scans
+  - [ ] **Test with challenging check images**
+    - [ ] Validate extraction accuracy with skewed check images
+    - [ ] Test with low-quality teller-capture scenarios
+    - [ ] Verify confidence scoring for imperfect scans
+    - [ ] Document extraction limitations and edge cases
+    - [ ] Create user guidance for optimal check capture
+
+  - [ ] **Optimize result display for edge cases**
+    - [ ] Handle partial or corrupted field extractions gracefully
+    - [ ] Show appropriate messages for unreadable areas
+    - [ ] Provide visual feedback for extraction confidence
+    - [ ] Add zoom and enhancement options for unclear results
+    - [ ] Include retry options with capture guidance
 - [ ] **Update Settings page for Azure configuration**
   - [ ] Add test connection button with loading state
   - [ ] Implement connection status indicator (success/failure/testing)
