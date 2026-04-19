@@ -1,53 +1,117 @@
-# Feature 2: Check Processing Feature
+# Feature 3: US Bank Check Extraction (Post-Classification)
 
 ## Overview
 
-This feature implements the bank check processing capability using Azure AI Document Intelligence's prebuilt bank check model. It leverages the built-in `prebuilt-bankCheck` model to extract structured data from US bank check images, providing both raw JSON results and user-friendly formatted displays.
+This feature implements **US bank check extraction after routing**, not as "any uploaded image that looks like a check." It receives documents already classified as `check` by the document classification system and uses Azure's **prebuilt US bank check model** (`prebuilt-check.us`) to extract structured data. This feature is **downstream of classification** and focuses specifically on check-specific extraction, mapping, and display.
 
 ## Goals
 
-- Integrate Azure AI Document Intelligence SDK for check processing
-- Implement secure credential management and API authentication
-- Process bank check images using the prebuilt model
-- Display results in both JSON and formatted views
-- Provide comprehensive error handling and user feedback
+- Process documents already classified as US bank checks
+- Use Azure's prebuilt US bank check model for specialized extraction
+- Display extracted fields with confidence scoring
+- Map raw Azure output into normalized teller-document schema
+- Handle classification mistakes gracefully with warnings
+- Provide check-specific result visualization
 
 ## User Stories
 
-### US2.1: Azure AI Integration
+### US3.1: Check Extraction Service (Post-Classification)
 **As a** developer  
-**I want** to integrate Azure Document Intelligence SDK  
-**So that** I can process bank check images using AI
+**I want** a check extraction service that processes pre-classified check documents  
+**So that** I can extract check data after document routing
 
 **Acceptance Criteria:**
-- Azure Document Intelligence client properly configured
-- Secure credential storage and retrieval
-- Connection testing and validation
-- Proper SDK error handling and logging
-- Support for different Azure regions
+- Receives documents already classified as `check` type
+- Uses `prebuilt-check.us` model exclusively
+- Integrates with document orchestration pipeline
+- Returns structured extraction results with confidence
+- Handles extraction errors and weak results gracefully
 
-### US2.2: Check Image Processing
+### US3.2: Raw-to-Normalized Check Mapping
+**As a** developer  
+**I want** to map raw Azure check extraction to normalized business fields  
+**So that** check results integrate with the unified teller-document schema
+
+**Acceptance Criteria:**
+- Map raw Azure output to normalized fields (amount, date, payer/payee, routing/account/check number)
+- Handle missing or low-confidence fields appropriately
+- Maintain original extraction metadata for debugging
+- Support confidence scoring at field level
+- Provide mapping validation and error reporting
+
+### US3.3: Confidence-Aware Check Results Display  
 **As a** user  
-**I want** to process bank check images  
-**So that** I can extract check information automatically
+**I want** to see extracted check data with confidence indicators  
+**So that** I can validate and trust the extraction results
 
 **Acceptance Criteria:**
-- Upload and process bank check images
-- Use prebuilt-bankCheck model for analysis
-- Display processing status with progress indicators
-- Handle processing timeouts and errors gracefully
-- Support common check image formats (JPEG, PNG)
+- Display extracted check fields in business-friendly format
+- Show confidence scores for each extracted field
+- Highlight low-confidence extractions with warnings
+- Provide fallback warning for weak or partial extraction
+- Include raw JSON view for technical validation
+- Show check-specific fields clearly labeled
 
-### US2.3: Results Display
+### US3.4: Classification Error Tolerance
 **As a** user  
-**I want** to view extracted check data in multiple formats  
-**So that** I can understand and use the processed information
+**I want** appropriate warnings when check extraction fails or produces weak results  
+**So that** I can identify classification mistakes and processing issues
 
-**Acceptance Criteria:**
-- Tabbed interface with JSON and formatted views
-- JSON view with syntax highlighting and formatting
-- Formatted view with labeled fields and confidence scores
-- Copy/share functionality for results
+**Acceptance Criteria:**  
+- Detect when extraction results are unexpectedly weak
+- Show warnings if critical check fields are missing
+- Provide feedback suggesting document might be misclassified
+- Allow manual verification and override workflows
+- Log extraction issues for model improvement
+
+## Technical Specifications
+
+### Check Processing Assumptions
+
+- **Input expectation**: Document already classified as US bank check
+- **Model used**: `prebuilt-check.us` (Azure's prebuilt US bank check model)
+- **Processing scope**: Check extraction, result mapping, check-specific display only
+- **No upload decisions**: This feature does not own upload or classification logic
+
+### Check Field Mapping
+
+The feature maps Azure's raw check extraction to normalized fields:
+
+```csharp
+public class CheckExtractionMapping
+{
+    // Raw Azure fields → Normalized business fields
+    public static NormalizedDocument MapCheckResult(ExtractionResult azureResult)
+    {
+        return new NormalizedDocument
+        {
+            // Common financial fields
+            Amount = ExtractAmount(azureResult),
+            DocumentDate = ExtractDate(azureResult),
+            AccountNumber = ExtractAccountNumber(azureResult),
+            RoutingNumber = ExtractRoutingNumber(azureResult),
+
+            // Check-specific fields
+            CheckNumber = ExtractCheckNumber(azureResult),
+            PayToName = ExtractPayee(azureResult),
+            Memo = ExtractMemo(azureResult),
+
+            // Processing metadata
+            ProcessingModelId = "prebuilt-check.us",
+            ProcessingConfidence = azureResult.OverallConfidence,
+            ProcessingWarnings = ValidateCheckExtraction(azureResult)
+        };
+    }
+}
+```
+
+## Documentation References
+
+### Prebuilt US Bank Check
+- **Prebuilt US Bank Check**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-bank-check?view=doc-intel-4.0.0
+- **Read/OCR Model Reference**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/read?view=doc-intel-4.0.0
+
+The bank check doc is the primary reference because it defines the check model and confirms the model ID `prebuilt-check.us`. The read model reference is useful when you need baseline OCR expectations or debugging support.
 - Visual overlay of extracted fields on original image
 
 ### US2.4: Error Handling and Validation

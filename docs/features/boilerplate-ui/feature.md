@@ -1,119 +1,217 @@
-# Feature 1: Boilerplate and UI Foundation
+# Feature 1: Document Orchestration Foundation
 
 ## Overview
 
-This feature establishes the foundational infrastructure for the Check Yo Self AI application, including project setup, core UI components, navigation structure, and essential services. It provides the scaffolding upon which all other features will be built.
+This feature establishes the foundational infrastructure for the Check Yo Self AI application as a **mixed-document intake** system. It creates the document orchestration shell that manages the complete pipeline: upload → classify → route → extract → normalize → display. This is not just UI scaffolding, but the **host workflow** for all document processing features.
 
 ## Goals
 
 - Set up clean MVVM architecture with dependency injection
-- Create responsive, cross-platform UI foundation
-- Establish navigation patterns and core user flows
-- Implement settings management infrastructure
-- Provide image handling and preview capabilities
+- Create document orchestration pipeline infrastructure
+- Establish shared pipeline contracts for all document types
+- Implement the complete processing workflow shell
+- Provide unified result display regardless of extraction model
+- Create processing status tracking and confidence reporting
 
 ## User Stories
 
-### US1.1: Project Infrastructure
+### US1.1: Document Orchestration Infrastructure
 **As a** developer  
-**I want** a well-structured MAUI project with proper architecture  
-**So that** I can build maintainable and testable features
+**I want** a well-structured document processing pipeline architecture  
+**So that** I can build maintainable mixed-document intake workflows
 
 **Acceptance Criteria:**
 - Project targets .NET 10 with MAUI framework
-- MVVM pattern implemented with proper base classes
-- Dependency injection configured in MauiProgram.cs
-- NuGet packages for Azure Document Intelligence SDK installed
-- Platform-specific configurations set up correctly
+- Document orchestration pipeline with proper abstraction layers
+- Dependency injection configured for all pipeline services
+- Shared pipeline contracts (DTOs) for all processing stages
+- Azure Document Intelligence SDK integrated properly
 
-### US1.2: Main Navigation
+### US1.2: Document Upload and Processing Flow
 **As a** user  
-**I want** intuitive navigation between different screens  
-**So that** I can easily access all application features
+**I want** to upload documents and track them through the complete processing pipeline  
+**So that** I can see classification, routing, and extraction results
 
 **Acceptance Criteria:**
-- Shell-based navigation with tabs/flyout menu
-- Main page with document upload functionality
-- Settings page accessible from navigation
-- Results page for displaying processed documents
-- Consistent navigation patterns across platforms
+- File upload/image capture from camera for teller capture images
+- Processing timeline/status component showing pipeline stages
+- Document classification result panel with confidence
+- Routing decision display showing selected extraction model
+- Normalized extraction result panel (model-agnostic display)
+- Processing status tracking across all pipeline stages
 
-### US1.3: Image Upload and Preview
-**As a** user  
-**I want** to upload and preview document images  
-**So that** I can verify the correct document before processing
-
-**Acceptance Criteria:**
-- Image picker integration (gallery and camera)
-- Image preview with zoom and pan capabilities
-- Image validation (format, size, quality)
-- Clear visual feedback for upload status
-- Error handling for invalid images
-
-### US1.4: Settings Management
-**As a** user  
-**I want** to configure Azure AI credentials  
-**So that** I can connect to my Document Intelligence service
-
-**Acceptance Criteria:**
-- Settings page with input fields for endpoint and API key
-- Secure storage of credentials using MAUI preferences
-- Input validation for Azure endpoint URLs
-- Test connection functionality
-- Clear error messages for configuration issues
-
-### US1.5: Base UI Components
+### US1.3: Pipeline Contracts and Abstraction
 **As a** developer  
-**I want** reusable UI components and styling  
-**So that** I can maintain consistent design across the app
+**I want** standardized contracts between pipeline stages  
+**So that** classification, routing, and extraction can evolve independently
 
 **Acceptance Criteria:**
-- Consistent color scheme and typography
-- Reusable controls for common UI patterns
-- Loading indicators and status displays
-- Error message components
-- Platform-appropriate styling and behaviors
+- Input document DTO with metadata and content
+- Classifier result DTO with type and confidence
+- Extraction result DTO for raw model outputs
+- Normalized domain DTO for unified business data
+- Confidence/warnings DTO for exception handling
+- App service abstractions for classifyDocument, analyzeCheck, analyzeDepositSlip
+
+### US1.4: Confidence and Exception Handling
+**As a** user  
+**I want** clear feedback about processing confidence and exceptions  
+**So that** I can understand and act on uncertain or failed results
+
+**Acceptance Criteria:**
+- Low-confidence warning states with clear messaging
+- Unsupported document type handling and guidance
+- Processing exception display with recovery options
+- Confidence indicators throughout the UI
+- Fallback paths for classification and extraction failures
+
+### US1.5: Settings and Configuration Management
+**As a** user  
+**I want** to configure Azure AI credentials and processing options  
+**So that** I can connect to my Document Intelligence services
+
+**Acceptance Criteria:**
+- Settings page with Azure endpoint and API key management
+- Secure storage of credentials using MAUI preferences
+- Connection testing and validation
+- Processing threshold configuration
+- Model selection and routing configuration
+
+### US1.6: Unified Result Display Framework
+**As a** developer  
+**I want** a model-agnostic result display system  
+**So that** check and deposit slip results use consistent presentation
+
+**Acceptance Criteria:**
+- Normalized result viewer that works for any document type
+- Confidence visualization across different model outputs
+- Raw vs. formatted result toggle (JSON + business view)
+- Export and sharing capabilities for any result type
+- Result comparison and validation tools
 
 ## Technical Specifications
 
-### Architecture Components
+### Pipeline Architecture
 
-#### Base Classes
+The document orchestration system follows this flow:
+
+```
+Upload → Validate → Classify → Route → Extract → Normalize → Display
+```
+
+#### Pipeline Contracts
+
+**Input Document Contract**
 ```csharp
-// Base ViewModel with common functionality
-public abstract class BaseViewModel : INotifyPropertyChanged
+public class DocumentInput
 {
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null);
-    public virtual Task InitializeAsync();
-}
-
-// Base ContentPage with ViewModel binding
-public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
-{
-    protected T ViewModel { get; private set; }
-    protected virtual Task OnAppearingAsync();
+    public string Id { get; set; }
+    public Stream Content { get; set; }
+    public string FileName { get; set; }
+    public string ContentType { get; set; }
+    public long FileSize { get; set; }
+    public DateTime UploadedAt { get; set; }
+    public Dictionary<string, string> Metadata { get; set; }
 }
 ```
 
-#### Service Interfaces
+**Classification Result Contract**  
 ```csharp
-public interface INavigationService
+public class ClassificationResult
 {
-    Task NavigateToAsync(string route, IDictionary<string, object> parameters = null);
-    Task GoBackAsync();
+    public string DocumentId { get; set; }
+    public DocumentType DocumentType { get; set; }
+    public double Confidence { get; set; }
+    public string ModelVersion { get; set; }
+    public List<AlternativeClassification> Alternatives { get; set; }
+    public string ReasoningDetails { get; set; }
+    public TimeSpan ProcessingTime { get; set; }
 }
 
-public interface IImageService
+public enum DocumentType
 {
-    Task<ImageResult> PickImageAsync(ImageSource source);
-    Task<bool> ValidateImageAsync(Stream imageStream);
+    Unknown,
+    BankCheck,
+    DepositSlip,
+    Other
+}
+```
+
+**Extraction Result Contract**
+```csharp
+public class ExtractionResult
+{
+    public string DocumentId { get; set; }
+    public string ModelId { get; set; }
+    public DocumentType DocumentType { get; set; }
+    public Dictionary<string, FieldValue> ExtractedFields { get; set; }
+    public double OverallConfidence { get; set; }
+    public string RawResponse { get; set; }
+    public List<ProcessingWarning> Warnings { get; set; }
+    public TimeSpan ProcessingTime { get; set; }
+}
+```
+
+**Normalized Domain Contract**
+```csharp
+public class NormalizedDocument
+{
+    public string DocumentId { get; set; }
+    public DocumentType Type { get; set; }
+    public DateTime ProcessedAt { get; set; }
+
+    // Common financial document fields
+    public decimal? Amount { get; set; }
+    public DateTime? DocumentDate { get; set; }
+    public string AccountNumber { get; set; }
+    public string RoutingNumber { get; set; }
+
+    // Check-specific fields
+    public string CheckNumber { get; set; }
+    public string PayToName { get; set; }
+    public string Memo { get; set; }
+
+    // Deposit slip-specific fields  
+    public string DepositSlipNumber { get; set; }
+    public List<DepositItem> DepositItems { get; set; }
+    public decimal? CashAmount { get; set; }
+    public decimal? CheckAmount { get; set; }
+
+    // Processing metadata
+    public string ProcessingModelId { get; set; }
+    public double ProcessingConfidence { get; set; }
+    public List<string> ProcessingWarnings { get; set; }
+}
+```
+
+#### Service Abstractions
+
+**Document Orchestration Service**
+```csharp
+public interface IDocumentOrchestrationService
+{
+    Task<ProcessingResult> ProcessDocumentAsync(DocumentInput document, CancellationToken cancellationToken = default);
+    Task<ClassificationResult> ClassifyDocumentAsync(DocumentInput document);
+    Task<ExtractionResult> ExtractDocumentAsync(DocumentInput document, DocumentType documentType);
+    Task<NormalizedDocument> NormalizeResultAsync(ExtractionResult extraction);
+}
+```
+
+**App Service Abstractions**
+```csharp
+public interface IDocumentClassifierService
+{
+    Task<ClassificationResult> ClassifyDocumentAsync(DocumentInput document);
 }
 
-public interface ISettingsService
+public interface ICheckAnalyzerService  
 {
-    Task<T> GetAsync<T>(string key, T defaultValue = default);
-    Task SetAsync<T>(string key, T value);
-    Task<bool> ContainsKeyAsync(string key);
+    Task<ExtractionResult> AnalyzeCheckAsync(DocumentInput document);
+}
+
+public interface IDepositSlipAnalyzerService
+{
+    Task<ExtractionResult> AnalyzeDepositSlipAsync(DocumentInput document);
 }
 ```
 
@@ -139,7 +237,7 @@ public interface ISettingsService
 
 #### Main Page Layout
 - Header with app title and settings access
-- Central upload area with drag-drop or tap functionality
+- Central upload area with camera capture and file selection functionality
 - Image preview section (hidden until image selected)
 - Process button (enabled when image uploaded and settings configured)
 - Status indicator for processing state
@@ -181,25 +279,14 @@ public class AppSettings
 }
 ```
 
-## Dependencies
+## Documentation References
 
-### NuGet Packages
-- `Azure.AI.DocumentIntelligence` (v1.0.0 or later)
-- `CommunityToolkit.Mvvm` (v8.0.0 or later)
-- `Microsoft.Extensions.Logging.Debug` (v8.0.0 or later)
+### Azure Document Intelligence Overview
+- **Overview / Model Map**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0
+- **Model Overview**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/model-overview?view=doc-intel-4.0.0  
+- **Choose Model Guidance**: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept/choose-model-feature?view=doc-intel-4.0.0
 
-### Platform Permissions
-- **Camera**: For capturing document images
-- **Photo Library**: For selecting existing images
-- **Network**: For Azure AI service communication
-
-## Risks and Mitigation
-
-### Risk 1: Platform-specific UI Inconsistencies
-**Mitigation**: Use MAUI community toolkit controls and extensive testing on all platforms
-
-### Risk 2: Image Handling Performance
-**Mitigation**: Implement image compression and async processing with progress indicators
+These are the right docs for the boilerplate feature because they define the available model families and help establish the demo's top-level processing flow.
 
 ### Risk 3: Settings Security
 **Mitigation**: Use MAUI SecureStorage for sensitive credentials with encryption
