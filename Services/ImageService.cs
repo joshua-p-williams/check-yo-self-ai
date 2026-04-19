@@ -55,7 +55,8 @@ public class ImageService : IImageService
                     break;
 
                 case ImageSource.PhotoLibrary:
-                    fileResult = await MediaPicker.Default.PickPhotoAsync(options);
+                    var photoResults = await MediaPicker.Default.PickPhotosAsync(options);
+                    fileResult = photoResults?.FirstOrDefault();
                     break;
 
                 case ImageSource.UserChoice:
@@ -65,7 +66,8 @@ public class ImageService : IImageService
                     {
                         if (!MediaPicker.Default.IsCaptureSupported)
                         {
-                            fileResult = await MediaPicker.Default.PickPhotoAsync(options);
+                            var fallbackResults = await MediaPicker.Default.PickPhotosAsync(options);
+                            fileResult = fallbackResults?.FirstOrDefault();
                         }
                         else
                         {
@@ -74,7 +76,8 @@ public class ImageService : IImageService
                     }
                     else
                     {
-                        fileResult = await MediaPicker.Default.PickPhotoAsync(options);
+                        var choiceResults = await MediaPicker.Default.PickPhotosAsync(options);
+                        fileResult = choiceResults?.FirstOrDefault();
                     }
                     break;
             }
@@ -116,8 +119,8 @@ public class ImageService : IImageService
             var permissionResult = await CheckAndRequestPermissions(ImageSource.PhotoLibrary);
             if (permissionResult != PermissionStatus.Granted)
             {
-                var errorResult = ImageResult.Failure($"Permission {permissionResult} for photo library", null, ImageSource.PhotoLibrary);
-                return new[] { errorResult };
+                var permissionErrorResult = ImageResult.Failure($"Permission {permissionResult} for photo library", null, ImageSource.PhotoLibrary);
+                return new[] { permissionErrorResult };
             }
 
             var options = new MediaPickerOptions
@@ -125,49 +128,30 @@ public class ImageService : IImageService
                 Title = "Select Images"
             };
 
-            // Note: MAUI MediaPicker doesn't directly support multiple selection yet
-            // We'll implement this as sequential single selections for now
-            // Future versions may support native multiple selection
+            // Use PickPhotosAsync which supports multiple selection natively
+            var multiResults = await MediaPicker.Default.PickPhotosAsync(options);
 
+            if (multiResults == null || !multiResults.Any())
+            {
+                _logger.LogDebug("Image selection was cancelled by user");
+                return new[] { ImageResult.Failure("Image selection was cancelled", null, ImageSource.PhotoLibrary) };
+            }
+
+            // Take up to maxCount results
+            var selectedFiles = multiResults.Take(maxCount);
             var results = new List<ImageResult>();
 
-            for (int i = 0; i < maxCount; i++)
+            foreach (var fileResult in selectedFiles)
             {
-                try
-                {
-                    var fileResult = await MediaPicker.Default.PickPhotoAsync(options);
-                    if (fileResult == null)
-                    {
-                        // User cancelled or finished selecting
-                        break;
-                    }
+                var savedPath = await SavePickedImage(fileResult);
+                var imageResult = ImageResult.Success(
+                    imagePath: savedPath,
+                    originalFilename: fileResult.FileName,
+                    contentType: fileResult.ContentType,
+                    source: ImageSource.PhotoLibrary
+                );
 
-                    var savedPath = await SavePickedImage(fileResult);
-                    var imageResult = ImageResult.Success(
-                        imagePath: savedPath,
-                        originalFilename: fileResult.FileName,
-                        contentType: fileResult.ContentType,
-                        source: ImageSource.PhotoLibrary
-                    );
-
-                    results.Add(imageResult);
-
-                    // Ask user if they want to continue selecting more images
-                    if (i < maxCount - 1)
-                    {
-                        var continueSelection = await PromptUserToContinueSelection();
-                        if (!continueSelection)
-                        {
-                            break;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to pick image {Index} of multiple selection", i + 1);
-                    results.Add(ImageResult.Failure($"Failed to pick image {i + 1}: {ex.Message}", ex, ImageSource.PhotoLibrary));
-                    break;
-                }
+                results.Add(imageResult);
             }
 
             _logger.LogDebug("Successfully picked {Count} images", results.Count);
@@ -176,8 +160,7 @@ public class ImageService : IImageService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to pick multiple images");
-            var errorResult = ImageResult.Failure($"Failed to pick multiple images: {ex.Message}", ex, ImageSource.PhotoLibrary);
-            return new[] { errorResult };
+            return new[] { ImageResult.Failure($"Failed to pick images: {ex.Message}", ex, ImageSource.PhotoLibrary) };
         }
     }
 

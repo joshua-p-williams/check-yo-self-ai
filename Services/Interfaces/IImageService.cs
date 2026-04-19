@@ -681,7 +681,7 @@ public class ImageException : Exception
 {
     public string? ImagePath { get; }
     public string? Operation { get; }
-    public ImageSource? Source { get; }
+    public new ImageSource? Source { get; }  // Use 'new' to explicitly hide the inherited Source property
 
     public ImageException(string message) : base(message) { }
 
