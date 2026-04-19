@@ -239,7 +239,7 @@ public abstract class BaseContentPage<TViewModel> : ContentPage, IDisposable
     /// <returns>Task representing the error display operation</returns>
     protected virtual async Task ShowErrorMessage(string message, Exception? exception = null)
     {
-        // Default implementation using DisplayAlert
+        // Default implementation using DisplayAlertAsync
         // Override in derived classes for custom error display
         var title = "Error";
         var okButton = "OK";
@@ -249,7 +249,7 @@ public abstract class BaseContentPage<TViewModel> : ContentPage, IDisposable
             _logger?.LogDebug("Showing error dialog: {Message} (Exception: {ExceptionType})", message, exception.GetType().Name);
         }
 
-        await this.DisplayAlert(title, message, okButton);
+        await this.DisplayAlertAsync(title, message, okButton);
     }
 
     #endregion
