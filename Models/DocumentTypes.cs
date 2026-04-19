@@ -1,4 +1,4 @@
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents the type of financial document being processed.

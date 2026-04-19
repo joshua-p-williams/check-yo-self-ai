@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents a document that has been processed through the complete pipeline and normalized
@@ -150,7 +150,7 @@ public class NormalizedDocument
     /// <summary>
     /// Validates that the normalized document has consistent and reasonable data.
     /// </summary>
-    public ValidationResult Validate()
+    public DocumentValidationResult Validate()
     {
         var errors = new List<string>();
         var warnings = new List<string>();
@@ -193,7 +193,7 @@ public class NormalizedDocument
             }
         }
 
-        return new ValidationResult
+        return new DocumentValidationResult
         {
             IsValid = errors.Count == 0,
             Errors = errors,
@@ -233,7 +233,7 @@ public class NormalizedDocument
 /// <summary>
 /// Result of document validation.
 /// </summary>
-public class ValidationResult
+public class DocumentValidationResult
 {
     /// <summary>
     /// Indicates whether the document passed validation.

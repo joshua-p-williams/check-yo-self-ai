@@ -1,6 +1,6 @@
-using check_yo_self_ai.Models;
+using CheckYoSelfAI.Models;
 
-namespace check_yo_self_ai.Services.Interfaces;
+namespace CheckYoSelfAI.Services.Interfaces;
 
 /// <summary>
 /// Service interface for deposit slip analysis using custom neural models.

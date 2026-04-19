@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents a document input for processing in the document pipeline.

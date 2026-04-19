@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents the result of document classification in the processing pipeline.

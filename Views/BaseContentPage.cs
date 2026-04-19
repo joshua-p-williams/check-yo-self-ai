@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using check_yo_self_ai.ViewModels;
+using CheckYoSelfAI.ViewModels;
 
-namespace check_yo_self_ai.Views;
+namespace CheckYoSelfAI.Views;
 
 /// <summary>
 /// Base class for all ContentPages in the application.

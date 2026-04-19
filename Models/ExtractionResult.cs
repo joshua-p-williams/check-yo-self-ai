@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents the raw extraction result from Azure Document Intelligence or other extraction models.

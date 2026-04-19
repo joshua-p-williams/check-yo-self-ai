@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 
-namespace check_yo_self_ai.ViewModels;
+namespace CheckYoSelfAI.ViewModels;
 
 /// <summary>
 /// Base class for all ViewModels in the application.

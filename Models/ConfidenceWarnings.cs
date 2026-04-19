@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace check_yo_self_ai.Models;
+namespace CheckYoSelfAI.Models;
 
 /// <summary>
 /// Represents confidence assessment and warnings for document processing results.
