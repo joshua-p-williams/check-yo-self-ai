@@ -72,6 +72,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include=".github\copilot-instructions.md" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="Azure.AI.DocumentIntelligence" Version="1.0.0" />
@@ -84,6 +88,9 @@
 		<AndroidManifest Include="Platforms\Android\AndroidManifest.xml" />
 	</ItemGroup>
 	<ItemGroup>
+	  <MauiXaml Update="Controls\DocumentUploadView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\ShellStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
