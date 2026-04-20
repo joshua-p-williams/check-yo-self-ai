@@ -128,12 +128,12 @@
   - [x] Configure accessibility labels and hints
 
 ### 3.2 Document Processing Components
-- [ ] **Create upload component for image input**
-  - [ ] Build camera capture and file selection interface
-  - [ ] Support image formats (JPEG, PNG)
-  - [ ] Add file validation and size limits
-  - [ ] Implement preview functionality
-  - [ ] Add image metadata display
+- [x] **Create upload component for image input**
+  - [x] Build camera capture and file selection interface
+  - [x] Support image formats (JPEG, PNG)
+  - [x] Add file validation and size limits
+  - [x] Implement preview functionality
+  - [x] Add image metadata display
 
 - [ ] **Create processing timeline/status component**
   - [ ] Design multi-stage progress indicator

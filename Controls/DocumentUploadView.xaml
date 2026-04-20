@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CheckYoSelfAI.ViewModels"
+             x:Class="CheckYoSelfAI.Controls.DocumentUploadView"
+             x:DataType="viewModels:DocumentUploadViewModel">
+
+    <VerticalStackLayout Spacing="16">
+        <Label Text="Upload Document"
+               Style="{StaticResource Headline}"
+               HorizontalOptions="Start"
+               HorizontalTextAlignment="Start" />
+
+        <Label Text="Capture a photo or choose an existing file. Supported formats: JPEG, PNG. Max file size: 10 MB."
+               FontSize="14" />
+
+        <Grid ColumnDefinitions="*,*"
+              ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Text="Capture Image"
+                    Command="{Binding CaptureImageCommand}" />
+            <Button Grid.Column="1"
+                    Text="Select File"
+                    Command="{Binding SelectImageCommand}" />
+        </Grid>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center" />
+
+        <Border Padding="12"
+                StrokeThickness="1">
+            <Grid RowDefinitions="Auto,Auto">
+                <Label Grid.Row="0"
+                       Text="No image selected"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       HeightRequest="220">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding HasSelectedImage}"
+                                     Value="True">
+                            <Setter Property="IsVisible"
+                                    Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+
+                <Image Grid.Row="1"
+                       Source="{Binding PreviewImageSource}"
+                       Aspect="AspectFit"
+                       IsVisible="{Binding HasSelectedImage}"
+                       HeightRequest="220"
+                       SemanticProperties.Description="Selected document preview" />
+            </Grid>
+        </Border>
+
+        <Button Text="Clear Selection"
+                Command="{Binding ClearImageCommand}"
+                IsVisible="{Binding HasSelectedImage}" />
+
+        <Border Padding="12"
+                IsVisible="{Binding HasSelectedImage}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Image Metadata"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Grid ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnSpacing="10"
+                      RowSpacing="4">
+                    <Label Grid.Row="0" Grid.Column="0" Text="File" FontAttributes="Bold" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding SelectedFileName}" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Format" FontAttributes="Bold" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding DetectedFormat}" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Size" FontAttributes="Bold" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding FileSizeDisplay}" />
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Dimensions" FontAttributes="Bold" />
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding DimensionsDisplay}" />
+
+                    <Label Grid.Row="4" Grid.Column="0" Text="Modified" FontAttributes="Bold" />
+                    <Label Grid.Row="4" Grid.Column="1" Text="{Binding LastModifiedDisplay}" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <Label Text="{Binding ValidationWarnings}"
+               TextColor="{StaticResource Warning}"
+               IsVisible="{Binding HasValidationWarnings}" />
+
+        <Label Text="{Binding StatusMessage}"
+               TextColor="{StaticResource Primary}"
+               IsVisible="{Binding HasStatusMessage}" />
+    </VerticalStackLayout>
+</ContentView>
+
+

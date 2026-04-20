@@ -98,9 +98,8 @@ namespace CheckYoSelfAI
             // Register all ViewModels as transient services
             // ViewModels should be transient because they are tied to specific view instances
 
-            // Main ViewModels (will be created in Phase 3)
-            // builder.Services.AddTransient<MainPageViewModel>();
-            // builder.Services.AddTransient<SettingsPageViewModel>();
+            // Main ViewModels (Phase 3)
+            builder.Services.AddTransient<ViewModels.DocumentUploadViewModel>();
 
             // Document processing ViewModels (will be created in later phases)
             // builder.Services.AddTransient<DocumentUploadViewModel>();
