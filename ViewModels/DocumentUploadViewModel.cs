@@ -2,11 +2,21 @@ using CheckYoSelfAI.Services.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using ImagePickSource = CheckYoSelfAI.Services.Interfaces.ImageSource;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace CheckYoSelfAI.ViewModels;
 
 public class DocumentUploadViewModel : BaseViewModel
 {
+    private enum ProcessingPipelineStage
+    {
+        Upload,
+        Classify,
+        Route,
+        Extract,
+        Normalize
+    }
+
     private static readonly ImageValidationOptions UploadValidationOptions = new()
     {
         MaxFileSizeBytes = 10 * 1024 * 1024,
@@ -20,14 +30,19 @@ public class DocumentUploadViewModel : BaseViewModel
     };
 
     private readonly IImageService _imageService;
+    private readonly Dictionary<ProcessingPipelineStage, ProcessingTimelineStage> _timelineStageMap;
 
     private Microsoft.Maui.Controls.ImageSource? _previewImageSource;
+    private ProcessingTimelineStage? _activeTimelineStage;
+    private DateTimeOffset? _activeTimelineStageStartedAt;
+    private string? _currentProcessingStage;
     private string _selectedFileName = "No file selected";
     private string _detectedFormat = "-";
     private string _fileSizeDisplay = "-";
     private string _dimensionsDisplay = "-";
     private string _lastModifiedDisplay = "-";
     private string? _statusMessage;
+    private string? _timelineErrorMessage;
     private string? _validationWarnings;
 
     public DocumentUploadViewModel(IImageService imageService, ILogger<DocumentUploadViewModel> logger)
@@ -40,6 +55,26 @@ public class DocumentUploadViewModel : BaseViewModel
         CaptureImageCommand = new AsyncRelayCommand(() => PickImageAsync(ImagePickSource.Camera), () => IsNotBusy);
         SelectImageCommand = new AsyncRelayCommand(() => PickImageAsync(ImagePickSource.PhotoLibrary), () => IsNotBusy);
         ClearImageCommand = new RelayCommand(ClearSelection, () => IsNotBusy && HasSelectedImage);
+
+        ProcessingTimelineStages =
+        [
+            new ProcessingTimelineStage("Upload", "Receive and validate the image payload.", 1),
+            new ProcessingTimelineStage("Classify", "Identify document type and confidence.", 2),
+            new ProcessingTimelineStage("Route", "Select the best extraction model.", 3),
+            new ProcessingTimelineStage("Extract", "Run model extraction for field data.", 4),
+            new ProcessingTimelineStage("Normalize", "Map extracted output to unified shape.", 5, isLast: true)
+        ];
+
+        _timelineStageMap = new Dictionary<ProcessingPipelineStage, ProcessingTimelineStage>
+        {
+            [ProcessingPipelineStage.Upload] = ProcessingTimelineStages[0],
+            [ProcessingPipelineStage.Classify] = ProcessingTimelineStages[1],
+            [ProcessingPipelineStage.Route] = ProcessingTimelineStages[2],
+            [ProcessingPipelineStage.Extract] = ProcessingTimelineStages[3],
+            [ProcessingPipelineStage.Normalize] = ProcessingTimelineStages[4]
+        };
+
+        ResetProcessingTimeline();
     }
 
     public IAsyncRelayCommand CaptureImageCommand { get; }
@@ -47,6 +82,8 @@ public class DocumentUploadViewModel : BaseViewModel
     public IAsyncRelayCommand SelectImageCommand { get; }
 
     public IRelayCommand ClearImageCommand { get; }
+
+    public ObservableCollection<ProcessingTimelineStage> ProcessingTimelineStages { get; }
 
     public Microsoft.Maui.Controls.ImageSource? PreviewImageSource
     {
@@ -107,6 +144,34 @@ public class DocumentUploadViewModel : BaseViewModel
 
     public bool HasStatusMessage => !string.IsNullOrWhiteSpace(StatusMessage);
 
+    public string? CurrentProcessingStage
+    {
+        get => _currentProcessingStage;
+        private set
+        {
+            if (SetProperty(ref _currentProcessingStage, value))
+            {
+                OnPropertyChanged(nameof(HasCurrentProcessingStage));
+            }
+        }
+    }
+
+    public bool HasCurrentProcessingStage => !string.IsNullOrWhiteSpace(CurrentProcessingStage);
+
+    public string? TimelineErrorMessage
+    {
+        get => _timelineErrorMessage;
+        private set
+        {
+            if (SetProperty(ref _timelineErrorMessage, value))
+            {
+                OnPropertyChanged(nameof(HasTimelineError));
+            }
+        }
+    }
+
+    public bool HasTimelineError => !string.IsNullOrWhiteSpace(TimelineErrorMessage);
+
     public string? ValidationWarnings
     {
         get => _validationWarnings;
@@ -135,18 +200,24 @@ public class DocumentUploadViewModel : BaseViewModel
         {
             StatusMessage = null;
             ValidationWarnings = null;
+            ResetProcessingTimeline();
+            StartProcessingStage(ProcessingPipelineStage.Upload);
 
             var imageResult = await _imageService.PickImageAsync(source);
             if (!imageResult.IsSuccess || string.IsNullOrWhiteSpace(imageResult.ImagePath))
             {
-                StatusMessage = imageResult.ErrorMessage ?? "Image selection was cancelled.";
+                var message = imageResult.ErrorMessage ?? "Image selection was cancelled.";
+                FailActiveProcessingStage(message);
+                StatusMessage = message;
                 return;
             }
 
             var validationResult = await _imageService.ValidateImageAsync(imageResult.ImagePath, UploadValidationOptions);
             if (!validationResult.IsValid)
             {
-                StatusMessage = validationResult.Errors.FirstOrDefault() ?? "Selected file did not pass validation.";
+                var message = validationResult.Errors.FirstOrDefault() ?? "Selected file did not pass validation.";
+                FailActiveProcessingStage(message);
+                StatusMessage = message;
                 ValidationWarnings = null;
                 return;
             }
@@ -164,7 +235,9 @@ public class DocumentUploadViewModel : BaseViewModel
             FileSizeDisplay = imageInfo.FormattedFileSize;
             DimensionsDisplay = imageInfo.FormattedResolution;
             LastModifiedDisplay = imageInfo.ModifiedDate?.ToLocalTime().ToString("g") ?? "Unknown";
-            StatusMessage = "Image ready for processing.";
+            CompleteActiveProcessingStage();
+            StartProcessingStage(ProcessingPipelineStage.Classify);
+            StatusMessage = "Image ready for processing. Classification will begin when processing starts.";
         }, "Unable to select image right now.");
     }
 
@@ -178,5 +251,73 @@ public class DocumentUploadViewModel : BaseViewModel
         LastModifiedDisplay = "-";
         StatusMessage = null;
         ValidationWarnings = null;
+        ResetProcessingTimeline();
+    }
+
+    private void ResetProcessingTimeline()
+    {
+        foreach (var stage in ProcessingTimelineStages)
+        {
+            stage.SetPending();
+        }
+
+        _activeTimelineStage = null;
+        _activeTimelineStageStartedAt = null;
+        CurrentProcessingStage = null;
+        TimelineErrorMessage = null;
+    }
+
+    private void StartProcessingStage(ProcessingPipelineStage stage)
+    {
+        if (!_timelineStageMap.TryGetValue(stage, out var timelineStage))
+        {
+            return;
+        }
+
+        _activeTimelineStage = timelineStage;
+        _activeTimelineStageStartedAt = DateTimeOffset.UtcNow;
+
+        timelineStage.SetInProgress();
+        CurrentProcessingStage = timelineStage.Title;
+        TimelineErrorMessage = null;
+    }
+
+    private void CompleteActiveProcessingStage()
+    {
+        if (_activeTimelineStage == null)
+        {
+            return;
+        }
+
+        _activeTimelineStage.SetCompleted(GetActiveStageDuration());
+        _activeTimelineStage = null;
+        _activeTimelineStageStartedAt = null;
+        CurrentProcessingStage = null;
+    }
+
+    private void FailActiveProcessingStage(string errorMessage)
+    {
+        if (_activeTimelineStage == null)
+        {
+            TimelineErrorMessage = errorMessage;
+            return;
+        }
+
+        _activeTimelineStage.SetFailed(GetActiveStageDuration(), errorMessage);
+        _activeTimelineStage = null;
+        _activeTimelineStageStartedAt = null;
+        CurrentProcessingStage = null;
+        TimelineErrorMessage = errorMessage;
+    }
+
+    private TimeSpan GetActiveStageDuration()
+    {
+        if (!_activeTimelineStageStartedAt.HasValue)
+        {
+            return TimeSpan.Zero;
+        }
+
+        var duration = DateTimeOffset.UtcNow - _activeTimelineStageStartedAt.Value;
+        return duration < TimeSpan.Zero ? TimeSpan.Zero : duration;
     }
 }

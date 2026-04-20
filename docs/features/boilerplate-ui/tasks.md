@@ -135,12 +135,12 @@
   - [x] Implement preview functionality
   - [x] Add image metadata display
 
-- [ ] **Create processing timeline/status component**
-  - [ ] Design multi-stage progress indicator
-  - [ ] Show upload → classify → route → extract → normalize steps
-  - [ ] Add timing information for each stage
-  - [ ] Display current processing stage with animations
-  - [ ] Handle error states in timeline
+- [x] **Create processing timeline/status component**
+  - [x] Design multi-stage progress indicator
+  - [x] Show upload → classify → route → extract → normalize steps
+  - [x] Add timing information for each stage
+  - [x] Display current processing stage with animations
+  - [x] Handle error states in timeline
 
 - [ ] **Create classification result card**
   - [ ] Display identified document type with confidence

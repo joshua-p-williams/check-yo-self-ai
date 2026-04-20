@@ -91,6 +91,9 @@
 	  <MauiXaml Update="Controls\DocumentUploadView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Controls\ProcessingTimelineView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\ShellStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
