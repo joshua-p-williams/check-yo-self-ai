@@ -31,21 +31,36 @@ This application provides an intuitive interface for users to upload images of f
 
 ## Architecture
 
-The application follows a clean MVVM architecture pattern with:
+The application follows a clean MVVM architecture pattern with dependency injection:
 
-- **Views**: XAML-based UI with platform-specific customizations
-- **ViewModels**: Business logic and data binding
-- **Services**: Azure AI integration and settings management
-- **Models**: Data transfer objects for document analysis results
+- **Views/Controls**: XAML pages and reusable controls for upload, timeline, and results
+- **ViewModels**: Command-driven UI logic and workflow orchestration
+- **Services**: Abstracted platform and domain services (`ImageService`, `SettingsService`, `NavigationService`, document pipeline services)
+- **Models**: DTOs and normalized result types for check/deposit-slip processing
+
+Service contracts are defined under `Services/Interfaces`, and concrete implementations are registered in `MauiProgram.cs`.
 
 ## Getting Started
 
 1. Clone this repository
 2. Open `check-yo-self-ai.sln` in Visual Studio
 3. Restore NuGet packages
-4. Set your target platform and run the application
-5. Configure your Azure AI credentials in the settings screen
-6. Upload a check or deposit slip image and start processing!
+4. Set a target platform (`Windows`, `Android`, `iOS`, or `macOS`) and run the application
+5. Open the **Settings** tab and configure:
+   - Azure endpoint URL
+   - Azure API key (stored in secure storage)
+   - Azure region
+6. Use the **Home** tab to capture/select an image, then run the guided document pipeline
+
+## Troubleshooting
+
+For common setup and runtime issues, see [docs/troubleshooting.md](docs/troubleshooting.md).
+
+Common quick checks:
+- Confirm the MAUI workload and `.NET 10` SDK are installed.
+- Verify Azure endpoint/key/region values in `Settings`.
+- Ensure camera/photo permissions are granted on device platforms.
+- Run `dotnet test Tests/CheckYoSelfAI.Tests.csproj` to validate core flows.
 
 ## Testing
 
@@ -150,6 +165,9 @@ Comprehensive documentation is available in the `docs/` folder:
 - [Architecture Definition](docs/architecture-definition.md)
 - [Product Definition](docs/product-definition.md)
 - [Feature Specifications](docs/features/)
+- [Troubleshooting Guide](docs/troubleshooting.md)
+- [Service/API Reference](docs/api-reference.md)
+- [Boilerplate UI Feature Status](docs/features/boilerplate-ui/status.md)
 
 ## Technologies Used
 

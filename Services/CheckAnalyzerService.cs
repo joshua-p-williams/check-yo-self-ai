@@ -4,15 +4,23 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckYoSelfAI.Services;
 
+/// <summary>
+/// Analyzes check documents and maps extraction output into the normalized domain model.
+/// </summary>
 public class CheckAnalyzerService : ICheckAnalyzerService
 {
     private readonly ILogger<CheckAnalyzerService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckAnalyzerService"/> class.
+    /// </summary>
+    /// <param name="logger">Logger used for analyzer diagnostics.</param>
     public CheckAnalyzerService(ILogger<CheckAnalyzerService> logger)
     {
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<ExtractionResult> AnalyzeCheckAsync(DocumentInput document, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -40,6 +48,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         };
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ExtractionResult>> BatchAnalyzeChecksAsync(IEnumerable<DocumentInput> documents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(documents);
@@ -53,6 +62,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         return results;
     }
 
+    /// <inheritdoc />
     public Task<NormalizedDocument> MapToNormalizedDocumentAsync(ExtractionResult extractionResult, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(extractionResult);
@@ -75,6 +85,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         return Task.FromResult(normalized);
     }
 
+    /// <inheritdoc />
     public CheckValidationResult ValidateCheckExtraction(ExtractionResult extractionResult)
     {
         ArgumentNullException.ThrowIfNull(extractionResult);
@@ -108,6 +119,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         return result;
     }
 
+    /// <inheritdoc />
     public Task<ModelInfo> GetModelInfoAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new ModelInfo
@@ -122,6 +134,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         });
     }
 
+    /// <inheritdoc />
     public Task<bool> TestServiceHealthAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -129,6 +142,7 @@ public class CheckAnalyzerService : ICheckAnalyzerService
         return Task.FromResult(true);
     }
 
+    /// <inheritdoc />
     public IEnumerable<string> GetRequiredCheckFields()
     {
         return ["CheckNumber", "Amount", "PayToName", "RoutingNumber"];

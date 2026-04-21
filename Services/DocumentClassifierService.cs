@@ -4,16 +4,24 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckYoSelfAI.Services;
 
+/// <summary>
+/// Classifies document inputs into supported financial document types for downstream routing.
+/// </summary>
 public class DocumentClassifierService : IDocumentClassifierService
 {
     private readonly ILogger<DocumentClassifierService> _logger;
     private ConfidenceThresholds _thresholds = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocumentClassifierService"/> class.
+    /// </summary>
+    /// <param name="logger">Logger used for classifier diagnostics.</param>
     public DocumentClassifierService(ILogger<DocumentClassifierService> logger)
     {
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<ClassificationResult> ClassifyDocumentAsync(DocumentInput document, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -80,6 +88,7 @@ public class DocumentClassifierService : IDocumentClassifierService
         return result;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ClassificationResult>> BatchClassifyAsync(IEnumerable<DocumentInput> documents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(documents);
@@ -93,6 +102,7 @@ public class DocumentClassifierService : IDocumentClassifierService
         return results;
     }
 
+    /// <inheritdoc />
     public Task<ClassifierModelInfo> GetModelInfoAsync(CancellationToken cancellationToken = default)
     {
         var info = new ClassifierModelInfo
@@ -108,14 +118,17 @@ public class DocumentClassifierService : IDocumentClassifierService
         return Task.FromResult(info);
     }
 
+    /// <inheritdoc />
     public Task<bool> ValidateModelAvailabilityAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return Task.FromResult(true);
     }
 
+    /// <inheritdoc />
     public ConfidenceThresholds GetConfidenceThresholds() => _thresholds;
 
+    /// <inheritdoc />
     public void SetConfidenceThresholds(ConfidenceThresholds thresholds)
     {
         ArgumentNullException.ThrowIfNull(thresholds);

@@ -5,6 +5,9 @@ using System.Collections.Concurrent;
 
 namespace CheckYoSelfAI.Services;
 
+/// <summary>
+/// Coordinates end-to-end document processing across classification, extraction, and normalization stages.
+/// </summary>
 public class DocumentOrchestrationService : IDocumentOrchestrationService
 {
     private readonly IDocumentClassifierService _classifierService;
@@ -15,6 +18,13 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
     private readonly ConcurrentDictionary<string, ProcessingStatusInfo> _statusById = new();
     private PipelineConfiguration _configuration = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocumentOrchestrationService"/> class.
+    /// </summary>
+    /// <param name="classifierService">Classifier service for document type detection.</param>
+    /// <param name="checkAnalyzerService">Analyzer for check documents.</param>
+    /// <param name="depositSlipAnalyzerService">Analyzer for deposit slip documents.</param>
+    /// <param name="logger">Logger used for orchestration diagnostics.</param>
     public DocumentOrchestrationService(
         IDocumentClassifierService classifierService,
         ICheckAnalyzerService checkAnalyzerService,
@@ -27,10 +37,14 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public event EventHandler<ProcessingStartedEventArgs>? ProcessingStarted;
+    /// <inheritdoc />
     public event EventHandler<ProcessingCompletedEventArgs>? ProcessingCompleted;
+    /// <inheritdoc />
     public event EventHandler<StageCompletedEventArgs>? StageCompleted;
 
+    /// <inheritdoc />
     public async Task<ProcessingResult> ProcessDocumentAsync(DocumentInput document, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -68,6 +82,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
             UpdateStatus(processingId, ProcessingStatus.InProgress, ProcessingStage.Routing, 35, startedAt, "Routing to extraction model");
 
             stageStart = DateTime.UtcNow;
+            // Extraction routing is determined by the classifier output to keep analyzer responsibilities isolated.
             result.ExtractionResult = await ExtractDocumentAsync(document, result.ClassificationResult.DocumentType, cancellationToken);
             RaiseStageCompleted(processingId, ProcessingStage.Extraction, stageStart, result.ExtractionResult);
             UpdateStatus(processingId, ProcessingStatus.InProgress, ProcessingStage.Normalization, 70, startedAt, "Normalizing extraction result");
@@ -123,11 +138,13 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         }
     }
 
+    /// <inheritdoc />
     public Task<ClassificationResult> ClassifyDocumentAsync(DocumentInput document, CancellationToken cancellationToken = default)
     {
         return _classifierService.ClassifyDocumentAsync(document, cancellationToken);
     }
 
+    /// <inheritdoc />
     public Task<ExtractionResult> ExtractDocumentAsync(DocumentInput document, DocumentType documentType, CancellationToken cancellationToken = default)
     {
         return documentType switch
@@ -138,6 +155,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         };
     }
 
+    /// <inheritdoc />
     public Task<NormalizedDocument> NormalizeResultAsync(ExtractionResult extraction, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(extraction);
@@ -150,6 +168,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         };
     }
 
+    /// <inheritdoc />
     public Task<ConfidenceWarnings> AssessProcessingQualityAsync(ProcessingResult processingResult, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(processingResult);
@@ -163,6 +182,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         var warnings = new ConfidenceWarnings
         {
             DocumentId = processingResult.DocumentInput?.Id ?? processingResult.Id,
+            // Overall score intentionally averages stage scores equally to keep quality gates predictable.
             OverallConfidenceScore = (classificationConfidence + extractionConfidence + normalizationConfidence) / 3,
             Thresholds = thresholds,
             ClassificationConfidence = new StageConfidence
@@ -208,11 +228,13 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         return Task.FromResult(warnings);
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ProcessingResult>> BatchProcessDocumentsAsync(IEnumerable<DocumentInput> documents, int maxConcurrency = 3, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(documents);
 
         var semaphore = new SemaphoreSlim(Math.Max(1, maxConcurrency));
+        // Concurrency is bounded to avoid overloading external analyzers while still parallelizing independent documents.
         var tasks = documents.Select(async document =>
         {
             await semaphore.WaitAsync(cancellationToken);
@@ -229,6 +251,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         return await Task.WhenAll(tasks);
     }
 
+    /// <inheritdoc />
     public Task<ProcessingStatusInfo> GetProcessingStatusAsync(string processingId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(processingId);
@@ -250,6 +273,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         });
     }
 
+    /// <inheritdoc />
     public Task<bool> CancelProcessingAsync(string processingId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(processingId);
@@ -267,11 +291,13 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         return Task.FromResult(true);
     }
 
+    /// <inheritdoc />
     public Task<PipelineConfiguration> GetPipelineConfigurationAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(_configuration);
     }
 
+    /// <inheritdoc />
     public Task UpdatePipelineConfigurationAsync(PipelineConfiguration configuration, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(configuration);
@@ -279,6 +305,7 @@ public class DocumentOrchestrationService : IDocumentOrchestrationService
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public async Task<PipelineHealthResult> CheckPipelineHealthAsync(CancellationToken cancellationToken = default)
     {
         var result = new PipelineHealthResult

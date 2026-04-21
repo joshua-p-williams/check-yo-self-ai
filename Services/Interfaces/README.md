@@ -1,6 +1,6 @@
-# Document Pipeline Service Abstractions - Created Files Summary
+# Document Pipeline Service Abstractions
 
-This document provides an overview of the service interfaces created for the document processing pipeline.
+This document provides an overview of the service interfaces used by the document processing pipeline and the concrete service implementations in `Services/`.
 
 ## Created Files
 
@@ -35,6 +35,18 @@ This document provides an overview of the service interfaces created for the doc
    - Specific exceptions for classification, extraction, normalization
    - Azure AI service exceptions with error code mapping
    - Rich error details for debugging and handling
+
+## Service Interface to Implementation Mapping
+
+- `IDocumentClassifierService` → `DocumentClassifierService`
+- `ICheckAnalyzerService` → `CheckAnalyzerService`
+- `IDepositSlipAnalyzerService` → `DepositSlipAnalyzerService`
+- `IDocumentOrchestrationService` → `DocumentOrchestrationService`
+- `IImageService` → `ImageService`
+- `ISettingsService` → `SettingsService`
+- `INavigationService` → `NavigationService`
+
+All services are registered in dependency injection via `MauiProgram.cs`.
 
 ## Key Features
 
@@ -91,11 +103,10 @@ IDocumentOrchestrationService
 - **Performance Tests**: Batch processing and concurrent operation testing
 - **Health Check Tests**: Service availability and configuration validation
 
-## Next Steps
+## API Documentation
 
-With the service abstractions complete, the next phase will be:
-1. **Phase 1.2 MVVM Architecture Setup**: Create base ViewModels and ContentPage
-2. **Phase 2: Core Services Implementation**: Implement the service interfaces
-3. **Phase 3: UI Foundation**: Create the Shell and main UI components
+Service API surface is documented with XML comments in:
+- `Services/Interfaces/*.cs`
+- `Services/*.cs` (public service implementations)
 
-These service interfaces provide a comprehensive foundation for implementing the document processing pipeline with proper separation of concerns, error handling, and extensibility for future enhancements.
+For a high-level generated-style API index, see `docs/api-reference.md`.

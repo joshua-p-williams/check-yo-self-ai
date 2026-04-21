@@ -4,21 +4,30 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckYoSelfAI.Services;
 
+/// <summary>
+/// Analyzes deposit slip documents using custom model routing and normalization rules.
+/// </summary>
 public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
 {
     private readonly ILogger<DepositSlipAnalyzerService> _logger;
     private string _defaultModelId = "custom-deposit-slip-v3";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DepositSlipAnalyzerService"/> class.
+    /// </summary>
+    /// <param name="logger">Logger used for analyzer diagnostics.</param>
     public DepositSlipAnalyzerService(ILogger<DepositSlipAnalyzerService> logger)
     {
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public Task<ExtractionResult> AnalyzeDepositSlipAsync(DocumentInput document, CancellationToken cancellationToken = default)
     {
         return AnalyzeDepositSlipWithModelAsync(document, _defaultModelId, cancellationToken);
     }
 
+    /// <inheritdoc />
     public async Task<ExtractionResult> AnalyzeDepositSlipWithModelAsync(DocumentInput document, string modelId, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -47,6 +56,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         };
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ExtractionResult>> BatchAnalyzeDepositSlipsAsync(IEnumerable<DocumentInput> documents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(documents);
@@ -60,6 +70,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return results;
     }
 
+    /// <inheritdoc />
     public Task<NormalizedDocument> MapToNormalizedDocumentAsync(ExtractionResult extractionResult, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(extractionResult);
@@ -87,6 +98,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return Task.FromResult(normalized);
     }
 
+    /// <inheritdoc />
     public DepositSlipValidationResult ValidateDepositSlipExtraction(ExtractionResult extractionResult)
     {
         ArgumentNullException.ThrowIfNull(extractionResult);
@@ -137,6 +149,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return result;
     }
 
+    /// <inheritdoc />
     public Task<IEnumerable<CustomModelInfo>> GetAvailableModelsAsync(CancellationToken cancellationToken = default)
     {
         IEnumerable<CustomModelInfo> models =
@@ -157,12 +170,14 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return Task.FromResult(models);
     }
 
+    /// <inheritdoc />
     public async Task<CustomModelInfo> GetDefaultModelInfoAsync(CancellationToken cancellationToken = default)
     {
         var models = await GetAvailableModelsAsync(cancellationToken);
         return models.First();
     }
 
+    /// <inheritdoc />
     public async Task<CustomModelInfo> GetModelInfoAsync(string modelId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(modelId);
@@ -177,6 +192,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return match;
     }
 
+    /// <inheritdoc />
     public Task<bool> TestServiceHealthAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -184,6 +200,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return Task.FromResult(true);
     }
 
+    /// <inheritdoc />
     public Task SetDefaultModelAsync(string modelId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(modelId);
@@ -191,6 +208,7 @@ public class DepositSlipAnalyzerService : IDepositSlipAnalyzerService
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public IEnumerable<string> GetRequiredDepositSlipFields()
     {
         return ["DepositSlipNumber", "Amount", "CashAmount", "CheckAmount", "AccountNumber"];
