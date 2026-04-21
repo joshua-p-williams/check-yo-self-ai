@@ -73,6 +73,13 @@
 
 	<ItemGroup>
 	  <None Include=".github\copilot-instructions.md" />
+	  <None Include="Tests\CheckYoSelfAI.Tests.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Tests\**\*.cs" />
+	  <EmbeddedResource Remove="Tests\**\*" />
+	  <None Remove="Tests\**\*" />
 	</ItemGroup>
 
 	<ItemGroup>
