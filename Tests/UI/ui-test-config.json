@@ -1,0 +1,7 @@
+{
+  "platform": "Windows",
+  "appiumServer": "http://127.0.0.1:4723",
+  "appIdEnvironmentVariable": "UI_TEST_APP_ID",
+  "deviceEnvironmentVariable": "UI_TEST_DEVICE",
+  "automationEnvironmentVariable": "UI_TEST_AUTOMATION"
+}

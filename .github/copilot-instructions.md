@@ -16,7 +16,9 @@
 - **Build**: Use Visual Studio 2026+ with .NET 10 and MAUI workload
 - **Run**: Open `check-yo-self-ai.sln`, restore NuGet, set platform, run
 - **Configure**: Enter Azure endpoint/key in app Settings page (stored securely)
-- **Test**: Unit tests mock Azure services; integration tests validate end-to-end flows
+- **Test**: 
+  - Unit tests mock Azure services; integration tests validate end-to-end flows
+  - For Appium UI tests, ensure the Appium server is running and configured correctly. Use the provided test scripts in the `tests/appium` directory to execute UI tests without breaking CI/CD pipelines.
 
 ## Key Conventions
 - **No hardcoded credentials**: Use secure storage APIs for Azure keys

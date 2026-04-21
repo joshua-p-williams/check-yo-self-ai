@@ -47,6 +47,84 @@ The application follows a clean MVVM architecture pattern with:
 5. Configure your Azure AI credentials in the settings screen
 6. Upload a check or deposit slip image and start processing!
 
+## Testing
+
+### Unit tests (current default in CI-friendly workflows)
+
+The test project is located at `Tests/CheckYoSelfAI.Tests.csproj`.
+
+Run all tests:
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj
+```
+
+Run with coverage collector settings:
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj --settings Tests/coverage.runsettings
+```
+
+### UI tests (Appium-based)
+
+UI tests are scaffolded under `Tests/UI/` and currently marked to skip unless you intentionally enable and run them with an Appium environment.
+
+#### 1) Install Appium 2 and driver
+
+```powershell
+npm install -g appium
+appium driver install windows
+```
+
+#### 2) Start Appium server
+
+```powershell
+appium
+```
+
+#### 3) Set environment variables
+
+At minimum (if running `dotnet test` directly):
+
+```powershell
+$env:UI_TEST_PLATFORM="Windows"
+$env:UI_TEST_APPIUM_SERVER="http://127.0.0.1:4723"
+$env:UI_TEST_APP_ID="<your app id or executable path>"
+```
+
+Optional:
+
+```powershell
+$env:UI_TEST_DEVICE="WindowsPC"
+$env:UI_TEST_AUTOMATION="Windows"
+```
+
+#### 4) Run only UI-category tests
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj --filter "Category=UI"
+```
+
+or use helper script (recommended):
+
+```powershell
+./Tests/UI/run-ui-tests.ps1 -Platform Windows -AppiumServer "http://127.0.0.1:4723"
+```
+
+`run-ui-tests.ps1` can auto-detect `UI_TEST_APP_ID` by finding the latest built `check-yo-self-ai.exe` under `bin/Debug` or `bin/Release`.
+
+If auto-detection fails, either build the app first or pass `-AppId` explicitly:
+
+```powershell
+./Tests/UI/run-ui-tests.ps1 -Platform Windows -AppId "C:\path\to\check-yo-self-ai.exe"
+```
+
+### CI/CD guidance
+
+- Keep normal CI pipelines running `dotnet test` without requiring Appium.
+- Run UI tests in a separate pipeline/job that provisions Appium + target device/emulator.
+- This separation keeps automated unit-test validation stable while allowing UI automation expansion later.
+
 ## Project Structure
 
 ```
