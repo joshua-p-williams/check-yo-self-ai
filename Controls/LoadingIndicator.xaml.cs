@@ -6,7 +6,8 @@ public partial class LoadingIndicator : ContentView
         nameof(IsActive),
         typeof(bool),
         typeof(LoadingIndicator),
-        false);
+        false,
+        propertyChanged: OnIsActiveChanged);
 
     public static readonly BindableProperty MessageProperty = BindableProperty.Create(
         nameof(Message),
@@ -36,6 +37,10 @@ public partial class LoadingIndicator : ContentView
     public LoadingIndicator()
     {
         InitializeComponent();
+        if (this.FindByName<Border>("LoadingCard") is Border loadingCard)
+        {
+            loadingCard.Scale = 0.96;
+        }
     }
 
     public bool IsActive
@@ -76,5 +81,36 @@ public partial class LoadingIndicator : ContentView
         {
             control.OnPropertyChanged(nameof(HasMessage));
         }
+    }
+
+    private static void OnIsActiveChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is LoadingIndicator control && newValue is bool isActive)
+        {
+            _ = control.AnimateVisibilityAsync(isActive);
+        }
+    }
+
+    private async Task AnimateVisibilityAsync(bool isActive)
+    {
+        var rootContainer = this.FindByName<Grid>("RootContainer");
+        var loadingCard = this.FindByName<Border>("LoadingCard");
+        if (rootContainer == null || loadingCard == null)
+        {
+            return;
+        }
+
+        if (isActive)
+        {
+            rootContainer.Opacity = 0;
+            loadingCard.Scale = 0.96;
+            await Task.WhenAll(
+                rootContainer.FadeTo(1, 140, Easing.CubicInOut),
+                loadingCard.ScaleTo(1, 180, Easing.CubicOut));
+            return;
+        }
+
+        await rootContainer.FadeTo(0, 120, Easing.CubicIn);
+        loadingCard.Scale = 0.96;
     }
 }

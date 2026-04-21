@@ -4,7 +4,8 @@
              xmlns:viewModels="clr-namespace:CheckYoSelfAI.ViewModels"
              x:Class="CheckYoSelfAI.Views.SettingsPage"
              x:DataType="viewModels:SettingsPageViewModel"
-             Title="Settings">
+             Title="Settings"
+             SemanticProperties.Description="Application settings">
 
     <ScrollView>
         <VerticalStackLayout Padding="20"
@@ -12,7 +13,8 @@
             <Label Text="Settings"
                    Style="{StaticResource Headline}"
                    HorizontalOptions="Start"
-                   HorizontalTextAlignment="Start" />
+                   HorizontalTextAlignment="Start"
+                   SemanticProperties.HeadingLevel="Level1" />
 
             <Border Padding="12">
                 <VerticalStackLayout Spacing="10">
@@ -36,7 +38,9 @@
                         <Entry Text="{Binding Endpoint}"
                                Placeholder="https://your-resource.cognitiveservices.azure.com/"
                                Keyboard="Url"
-                               ClearButtonVisibility="WhileEditing" />
+                               ClearButtonVisibility="WhileEditing"
+                               x:Name="EndpointEntry"
+                               SemanticProperties.Description="Azure endpoint URL" />
                     </Border>
                     <Label Text="{Binding EndpointError}"
                            FontSize="11"
@@ -59,7 +63,9 @@
                         <Entry Text="{Binding ApiKey}"
                                Placeholder="Paste Azure API key"
                                IsPassword="True"
-                               ClearButtonVisibility="WhileEditing" />
+                               ClearButtonVisibility="WhileEditing"
+                               x:Name="ApiKeyEntry"
+                               SemanticProperties.Description="Azure API key" />
                     </Border>
                     <Label Text="{Binding ApiKeyError}"
                            FontSize="11"
@@ -81,7 +87,9 @@
                         </Border.Triggers>
                         <Entry Text="{Binding Region}"
                                Placeholder="eastus"
-                               ClearButtonVisibility="WhileEditing" />
+                               ClearButtonVisibility="WhileEditing"
+                               x:Name="RegionEntry"
+                               SemanticProperties.Description="Azure region" />
                     </Border>
                     <Label Text="{Binding RegionError}"
                            FontSize="11"
@@ -90,20 +98,25 @@
 
                     <Grid ColumnDefinitions="*,Auto"
                           ColumnSpacing="8">
-                        <Button Grid.Column="0"
+                        <Button x:Name="TestConnectionButton"
+                                Grid.Column="0"
                                 Text="Test Connection"
                                 Command="{Binding TestConnectionCommand}"
-                                IsEnabled="{Binding IsNotTestingConnection}" />
+                                IsEnabled="{Binding IsNotTestingConnection}"
+                                Clicked="OnActionInvoked"
+                                SemanticProperties.Description="Test Azure connection" />
                         <ActivityIndicator Grid.Column="1"
                                            IsRunning="{Binding IsTestingConnection}"
                                            IsVisible="{Binding IsTestingConnection}"
-                                           VerticalOptions="Center" />
+                                           VerticalOptions="Center"
+                                           SemanticProperties.Description="Testing connection in progress" />
                     </Grid>
 
                     <Label Text="{Binding TestConnectionStatusMessage}"
                            FontSize="12"
                            TextColor="{StaticResource Primary}"
-                           IsVisible="{Binding HasTestConnectionStatusMessage}" />
+                           IsVisible="{Binding HasTestConnectionStatusMessage}"
+                           SemanticProperties.Description="Connection status" />
                 </VerticalStackLayout>
             </Border>
 
@@ -118,8 +131,11 @@
                         <Label Grid.Column="0"
                                Text="Auto-save processing results"
                                VerticalTextAlignment="Center" />
-                        <Switch Grid.Column="1"
-                                IsToggled="{Binding AutoSaveResults}" />
+                        <Switch x:Name="AutoSaveSwitch"
+                                Grid.Column="1"
+                                IsToggled="{Binding AutoSaveResults}"
+                                Toggled="OnPreferenceToggled"
+                                SemanticProperties.Description="Auto-save processing results" />
                     </Grid>
 
                     <Grid ColumnDefinitions="*,Auto"
@@ -127,8 +143,11 @@
                         <Label Grid.Column="0"
                                Text="Show confidence scores by default"
                                VerticalTextAlignment="Center" />
-                        <Switch Grid.Column="1"
-                                IsToggled="{Binding ShowConfidenceScores}" />
+                        <Switch x:Name="ShowConfidenceSwitch"
+                                Grid.Column="1"
+                                IsToggled="{Binding ShowConfidenceScores}"
+                                Toggled="OnPreferenceToggled"
+                                SemanticProperties.Description="Show confidence scores by default" />
                     </Grid>
 
                     <Label Text="Additional preferences will be added in future phases."
@@ -137,13 +156,17 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Button Text="Save Settings"
+            <Button x:Name="SaveSettingsButton"
+                    Text="Save Settings"
                     Command="{Binding SaveSettingsCommand}"
-                    IsEnabled="{Binding IsNotSaving}" />
+                    IsEnabled="{Binding IsNotSaving}"
+                    Clicked="OnActionInvoked"
+                    SemanticProperties.Description="Save settings" />
 
             <ActivityIndicator IsRunning="{Binding IsSaving}"
                                IsVisible="{Binding IsSaving}"
-                               HorizontalOptions="Center" />
+                               HorizontalOptions="Center"
+                               SemanticProperties.Description="Saving settings" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

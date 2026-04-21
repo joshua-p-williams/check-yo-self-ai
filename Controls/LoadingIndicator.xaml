@@ -4,13 +4,16 @@
              x:Class="CheckYoSelfAI.Controls.LoadingIndicator"
              x:Name="Root">
 
-    <Grid IsVisible="{Binding IsActive, Source={x:Reference Root}}"
+    <Grid x:Name="RootContainer"
+          IsVisible="{Binding IsActive, Source={x:Reference Root}}"
+          Opacity="0"
           InputTransparent="False">
         <Grid BackgroundColor="#000000"
               Opacity="0.25"
               IsVisible="{Binding ShowOverlay, Source={x:Reference Root}}" />
 
-        <Border Padding="14"
+        <Border x:Name="LoadingCard"
+                Padding="14"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
@@ -21,11 +24,13 @@
                                    IsVisible="{Binding IsActive, Source={x:Reference Root}}"
                                    Color="{Binding IndicatorColor, Source={x:Reference Root}}"
                                    WidthRequest="{Binding IndicatorSize, Source={x:Reference Root}}"
-                                   HeightRequest="{Binding IndicatorSize, Source={x:Reference Root}}" />
+                                   HeightRequest="{Binding IndicatorSize, Source={x:Reference Root}}"
+                                   SemanticProperties.Description="Loading" />
                 <Label Text="{Binding Message, Source={x:Reference Root}}"
                        FontSize="12"
                        HorizontalTextAlignment="Center"
-                       IsVisible="{Binding HasMessage, Source={x:Reference Root}}" />
+                       IsVisible="{Binding HasMessage, Source={x:Reference Root}}"
+                       SemanticProperties.Description="Loading message" />
             </VerticalStackLayout>
         </Border>
     </Grid>

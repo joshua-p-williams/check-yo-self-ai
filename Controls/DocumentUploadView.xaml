@@ -8,11 +8,13 @@
              x:Name="Root"
              x:DataType="viewModels:DocumentUploadViewModel">
 
-    <VerticalStackLayout Spacing="16">
+    <VerticalStackLayout Spacing="16"
+                         SemanticProperties.Description="Document upload and processing workflow">
         <Label Text="Upload Document"
                Style="{StaticResource Headline}"
                HorizontalOptions="Start"
-               HorizontalTextAlignment="Start" />
+               HorizontalTextAlignment="Start"
+               SemanticProperties.HeadingLevel="Level1" />
 
         <Label Text="Capture a photo or choose an existing file. Supported formats: JPEG, PNG. Max file size: 10 MB."
                FontSize="14" />
@@ -20,11 +22,19 @@
         <Grid ColumnDefinitions="*,*"
               ColumnSpacing="12">
             <Button Grid.Column="0"
+                    x:Name="CaptureImageButton"
                     Text="Capture Image"
-                    Command="{Binding CaptureImageCommand}" />
+                    Command="{Binding CaptureImageCommand}"
+                    Clicked="OnActionInvoked"
+                    SemanticProperties.Description="Capture image"
+                    SemanticProperties.Hint="Opens the camera to capture a document image" />
             <Button Grid.Column="1"
+                    x:Name="SelectFileButton"
                     Text="Select File"
-                    Command="{Binding SelectImageCommand}" />
+                    Command="{Binding SelectImageCommand}"
+                    Clicked="OnActionInvoked"
+                    SemanticProperties.Description="Select image file"
+                    SemanticProperties.Hint="Opens the photo library to choose a document image" />
         </Grid>
 
         <controls:LoadingIndicator IsActive="{Binding IsBusy}"
@@ -66,13 +76,18 @@
                        Aspect="AspectFit"
                        IsVisible="{Binding HasSelectedImage}"
                        HeightRequest="220"
-                       SemanticProperties.Description="Selected document preview" />
+                       SemanticProperties.Description="Selected document preview"
+                       SemanticProperties.Hint="Preview of the selected image before processing" />
             </Grid>
         </Border>
 
-        <Button Text="Clear Selection"
+        <Button x:Name="ClearSelectionButton"
+                Text="Clear Selection"
                 Command="{Binding ClearImageCommand}"
-                IsVisible="{Binding HasSelectedImage}" />
+                IsVisible="{Binding HasSelectedImage}"
+                Clicked="OnActionInvoked"
+                SemanticProperties.Description="Clear selected image"
+                SemanticProperties.Hint="Clears the selected image and resets processing state" />
 
         <Border Padding="12"
                 IsVisible="{Binding HasSelectedImage}">
@@ -88,11 +103,17 @@
                 <Grid ColumnDefinitions="*,*"
                       ColumnSpacing="10">
                     <Button Grid.Column="0"
+                            x:Name="RunNextStepButton"
                             Text="Run Next Step"
-                            Command="{Binding ProcessNextStageCommand}" />
+                            Command="{Binding ProcessNextStageCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Run next processing step" />
                     <Button Grid.Column="1"
+                            x:Name="RunAllRemainingButton"
                             Text="Run All Remaining"
-                            Command="{Binding ProcessAllStagesCommand}" />
+                            Command="{Binding ProcessAllStagesCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Run all remaining processing steps" />
                 </Grid>
             </VerticalStackLayout>
         </Border>
@@ -203,7 +224,8 @@
                                             Text="Use"
                                             Padding="8,4"
                                             Command="{Binding Source={x:Reference Root}, Path=BindingContext.OverrideClassificationCommand}"
-                                            CommandParameter="{Binding DocumentType}" />
+                                            CommandParameter="{Binding DocumentType}"
+                                            SemanticProperties.Description="Use this classification option" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -270,9 +292,12 @@
                     </BindableLayout.ItemTemplate>
                 </FlexLayout>
 
-                <Button Text="Open Model Documentation"
+                <Button x:Name="OpenModelDocumentationButton"
+                        Text="Open Model Documentation"
                         Command="{Binding OpenModelDocumentationCommand}"
-                        IsVisible="{Binding HasModelDocumentationUrl}" />
+                        IsVisible="{Binding HasModelDocumentationUrl}"
+                        Clicked="OnActionInvoked"
+                        SemanticProperties.Description="Open model documentation" />
             </VerticalStackLayout>
         </Border>
 
@@ -332,15 +357,24 @@
                 <Grid ColumnDefinitions="*,*"
                       ColumnSpacing="8">
                     <Button Grid.Column="0"
+                            x:Name="ToggleNormalizedViewButton"
                             Text="{Binding NormalizedViewToggleText}"
-                            Command="{Binding ToggleNormalizedResultViewCommand}" />
+                            Command="{Binding ToggleNormalizedResultViewCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Toggle normalized result view" />
                     <Button Grid.Column="1"
+                            x:Name="ExportJsonButton"
                             Text="Export JSON"
-                            Command="{Binding ExportNormalizedResultCommand}" />
+                            Command="{Binding ExportNormalizedResultCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Export normalized JSON" />
                 </Grid>
 
-                <Button Text="Share Result"
-                        Command="{Binding ShareNormalizedResultCommand}" />
+                <Button x:Name="ShareResultButton"
+                        Text="Share Result"
+                        Command="{Binding ShareNormalizedResultCommand}"
+                        Clicked="OnActionInvoked"
+                        SemanticProperties.Description="Share normalized result" />
 
                 <CollectionView ItemsSource="{Binding NormalizedFieldItems}"
                                 SelectionMode="None"
@@ -402,22 +436,30 @@
                 <Grid ColumnDefinitions="*,*"
                       ColumnSpacing="8">
                     <Button Grid.Column="0"
+                            x:Name="TriggerManualReviewButton"
                             Text="Trigger Manual Review"
-                            Command="{Binding TriggerManualReviewCommand}" />
+                            Command="{Binding TriggerManualReviewCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Trigger manual review" />
                     <Button Grid.Column="1"
+                            x:Name="TryFallbackModelButton"
                             Text="Try Fallback Model"
-                            Command="{Binding TryFallbackProcessingCommand}" />
+                            Command="{Binding TryFallbackProcessingCommand}"
+                            Clicked="OnActionInvoked"
+                            SemanticProperties.Description="Try fallback processing model" />
                 </Grid>
             </VerticalStackLayout>
         </Border>
 
         <Label Text="{Binding ValidationWarnings}"
                TextColor="{StaticResource Warning}"
-               IsVisible="{Binding HasValidationWarnings}" />
+               IsVisible="{Binding HasValidationWarnings}"
+               SemanticProperties.Description="Validation warnings" />
 
         <Label Text="{Binding StatusMessage}"
                TextColor="{StaticResource Primary}"
-               IsVisible="{Binding HasStatusMessage}" />
+               IsVisible="{Binding HasStatusMessage}"
+               SemanticProperties.Description="Status message" />
     </VerticalStackLayout>
 </ContentView>
 
