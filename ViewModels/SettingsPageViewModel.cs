@@ -184,6 +184,29 @@ public class SettingsPageViewModel : BaseViewModel
 
     public bool HasValidationErrors => HasEndpointError || HasApiKeyError || HasRegionError;
 
+    public string ValidationSummary
+    {
+        get
+        {
+            if (HasEndpointError)
+            {
+                return EndpointError ?? string.Empty;
+            }
+
+            if (HasApiKeyError)
+            {
+                return ApiKeyError ?? string.Empty;
+            }
+
+            if (HasRegionError)
+            {
+                return RegionError ?? string.Empty;
+            }
+
+            return string.Empty;
+        }
+    }
+
     protected override void OnBusyChanged(bool isBusy)
     {
         base.OnBusyChanged(isBusy);
@@ -308,6 +331,7 @@ public class SettingsPageViewModel : BaseViewModel
         ValidateRegion();
 
         OnPropertyChanged(nameof(HasValidationErrors));
+        OnPropertyChanged(nameof(ValidationSummary));
         return !HasValidationErrors;
     }
 
@@ -316,7 +340,7 @@ public class SettingsPageViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(Endpoint))
         {
             EndpointError = "Endpoint URL is required.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
@@ -324,12 +348,12 @@ public class SettingsPageViewModel : BaseViewModel
             (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp))
         {
             EndpointError = "Endpoint must be a valid URL.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
         EndpointError = null;
-        OnPropertyChanged(nameof(HasValidationErrors));
+        NotifyValidationStateChanged();
     }
 
     private void ValidateApiKey()
@@ -337,7 +361,7 @@ public class SettingsPageViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(ApiKey))
         {
             ApiKeyError = "API key is required.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
@@ -345,19 +369,19 @@ public class SettingsPageViewModel : BaseViewModel
         if (trimmed.Length < 32)
         {
             ApiKeyError = "API key must be at least 32 characters.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
         if (!ApiKeyRegex.IsMatch(trimmed))
         {
             ApiKeyError = "API key should contain only hexadecimal characters.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
         ApiKeyError = null;
-        OnPropertyChanged(nameof(HasValidationErrors));
+        NotifyValidationStateChanged();
     }
 
     private void ValidateRegion()
@@ -365,12 +389,18 @@ public class SettingsPageViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(Region))
         {
             RegionError = "Region is required.";
-            OnPropertyChanged(nameof(HasValidationErrors));
+            NotifyValidationStateChanged();
             return;
         }
 
         RegionError = null;
+        NotifyValidationStateChanged();
+    }
+
+    private void NotifyValidationStateChanged()
+    {
         OnPropertyChanged(nameof(HasValidationErrors));
+        OnPropertyChanged(nameof(ValidationSummary));
     }
 
     private void RefreshCommandStates()

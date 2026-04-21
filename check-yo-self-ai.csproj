@@ -91,6 +91,12 @@
 	  <MauiXaml Update="Controls\DocumentUploadView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Controls\ErrorMessageView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\LoadingIndicator.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Controls\ProcessingTimelineView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

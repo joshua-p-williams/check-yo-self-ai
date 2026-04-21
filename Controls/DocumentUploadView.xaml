@@ -27,15 +27,21 @@
                     Command="{Binding SelectImageCommand}" />
         </Grid>
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                           IsVisible="{Binding IsBusy}"
-                           HorizontalOptions="Center" />
+        <controls:LoadingIndicator IsActive="{Binding IsBusy}"
+                                   Message="Processing..."
+                                   IndicatorSize="28"
+                                   IndicatorColor="{StaticResource Primary}" />
 
         <controls:ProcessingTimelineView Stages="{Binding ProcessingTimelineStages}"
                                          CurrentStageText="{Binding CurrentProcessingStage}"
                                          HasCurrentStage="{Binding HasCurrentProcessingStage}"
                                          HasError="{Binding HasTimelineError}"
                                          ErrorMessage="{Binding TimelineErrorMessage}" />
+
+        <controls:ErrorMessageView Message="{Binding TimelineErrorMessage}"
+                                   Severity="Error"
+                                   IsDismissible="True"
+                                   IsPersistent="False" />
 
         <Border Padding="12"
                 StrokeThickness="1">
