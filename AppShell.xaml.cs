@@ -1,4 +1,5 @@
 ﻿using CheckYoSelfAI.Services.Interfaces;
+using CheckYoSelfAI.Views;
 
 namespace CheckYoSelfAI
 {
@@ -22,7 +23,7 @@ namespace CheckYoSelfAI
             Routing.RegisterRoute(NavigationRoutes.ProcessingStatus, typeof(MainPage)); // Placeholder - will be replaced with actual ProcessingStatusPage
 
             // Azure configuration routes
-            Routing.RegisterRoute(NavigationRoutes.AzureSettings, typeof(MainPage)); // Placeholder - will be replaced with actual AzureSettingsPage
+            Routing.RegisterRoute(NavigationRoutes.AzureSettings, typeof(SettingsPage));
             Routing.RegisterRoute(NavigationRoutes.AzureSetup, typeof(MainPage)); // Placeholder - will be replaced with actual AzureSetupPage
 
             // Help and support routes

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CheckYoSelfAI.ViewModels"
+             x:Class="CheckYoSelfAI.Views.SettingsPage"
+             x:DataType="viewModels:SettingsPageViewModel"
+             Title="Settings">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+            <Label Text="Settings"
+                   Style="{StaticResource Headline}"
+                   HorizontalOptions="Start"
+                   HorizontalTextAlignment="Start" />
+
+            <Border Padding="12">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Azure AI Configuration"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Label Text="Endpoint URL"
+                           FontAttributes="Bold"
+                           FontSize="13" />
+                    <Border Padding="8,4"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding HasEndpointError}"
+                                         Value="True">
+                                <Setter Property="Stroke"
+                                        Value="{StaticResource Error}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Entry Text="{Binding Endpoint}"
+                               Placeholder="https://your-resource.cognitiveservices.azure.com/"
+                               Keyboard="Url"
+                               ClearButtonVisibility="WhileEditing" />
+                    </Border>
+                    <Label Text="{Binding EndpointError}"
+                           FontSize="11"
+                           TextColor="{StaticResource Error}"
+                           IsVisible="{Binding HasEndpointError}" />
+
+                    <Label Text="API Key"
+                           FontAttributes="Bold"
+                           FontSize="13" />
+                    <Border Padding="8,4"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding HasApiKeyError}"
+                                         Value="True">
+                                <Setter Property="Stroke"
+                                        Value="{StaticResource Error}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Entry Text="{Binding ApiKey}"
+                               Placeholder="Paste Azure API key"
+                               IsPassword="True"
+                               ClearButtonVisibility="WhileEditing" />
+                    </Border>
+                    <Label Text="{Binding ApiKeyError}"
+                           FontSize="11"
+                           TextColor="{StaticResource Error}"
+                           IsVisible="{Binding HasApiKeyError}" />
+
+                    <Label Text="Region"
+                           FontAttributes="Bold"
+                           FontSize="13" />
+                    <Border Padding="8,4"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding HasRegionError}"
+                                         Value="True">
+                                <Setter Property="Stroke"
+                                        Value="{StaticResource Error}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Entry Text="{Binding Region}"
+                               Placeholder="eastus"
+                               ClearButtonVisibility="WhileEditing" />
+                    </Border>
+                    <Label Text="{Binding RegionError}"
+                           FontSize="11"
+                           TextColor="{StaticResource Error}"
+                           IsVisible="{Binding HasRegionError}" />
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="8">
+                        <Button Grid.Column="0"
+                                Text="Test Connection"
+                                Command="{Binding TestConnectionCommand}"
+                                IsEnabled="{Binding IsNotTestingConnection}" />
+                        <ActivityIndicator Grid.Column="1"
+                                           IsRunning="{Binding IsTestingConnection}"
+                                           IsVisible="{Binding IsTestingConnection}"
+                                           VerticalOptions="Center" />
+                    </Grid>
+
+                    <Label Text="{Binding TestConnectionStatusMessage}"
+                           FontSize="12"
+                           TextColor="{StaticResource Primary}"
+                           IsVisible="{Binding HasTestConnectionStatusMessage}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="12">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="App Preferences"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="8">
+                        <Label Grid.Column="0"
+                               Text="Auto-save processing results"
+                               VerticalTextAlignment="Center" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding AutoSaveResults}" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="8">
+                        <Label Grid.Column="0"
+                               Text="Show confidence scores by default"
+                               VerticalTextAlignment="Center" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding ShowConfidenceScores}" />
+                    </Grid>
+
+                    <Label Text="Additional preferences will be added in future phases."
+                           FontSize="12"
+                           TextColor="{StaticResource Gray600}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Save Settings"
+                    Command="{Binding SaveSettingsCommand}"
+                    IsEnabled="{Binding IsNotSaving}" />
+
+            <ActivityIndicator IsRunning="{Binding IsSaving}"
+                               IsVisible="{Binding IsSaving}"
+                               HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

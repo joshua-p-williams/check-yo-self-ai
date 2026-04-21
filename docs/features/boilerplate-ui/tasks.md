@@ -171,25 +171,25 @@
   - [x] Include fallback processing options
 
 ### 3.3 Settings Page Implementation
-- [ ] **Create SettingsPage.xaml layout**
-  - [ ] Azure AI Configuration section with grouped entries
-  - [ ] Endpoint URL entry with validation styling
-  - [ ] API Key entry with secure text entry
-  - [ ] Test Connection button with loading states
-  - [ ] App preferences section for future settings
+- [x] **Create SettingsPage.xaml layout**
+  - [x] Azure AI Configuration section with grouped entries
+  - [x] Endpoint URL entry with validation styling
+  - [x] API Key entry with secure text entry
+  - [x] Test Connection button with loading states
+  - [x] App preferences section for future settings
 
-- [ ] **Create SettingsPageViewModel**
-  - [ ] Bind to AzureSettings model properties
-  - [ ] Implement SaveSettingsCommand with validation
-  - [ ] Implement TestConnectionCommand (placeholder)
-  - [ ] Add input validation with error messaging
-  - [ ] Handle navigation back after successful save
+- [x] **Create SettingsPageViewModel**
+  - [x] Bind to AzureSettings model properties
+  - [x] Implement SaveSettingsCommand with validation
+  - [x] Implement TestConnectionCommand (placeholder)
+  - [x] Add input validation with error messaging
+  - [x] Handle navigation back after successful save
 
-- [ ] **Implement settings validation**
-  - [ ] URL format validation for Azure endpoint
-  - [ ] API key format basic validation
-  - [ ] Required field validation with visual feedback
-  - [ ] Real-time validation as user types
+- [x] **Implement settings validation**
+  - [x] URL format validation for Azure endpoint
+  - [x] API key format basic validation
+  - [x] Required field validation with visual feedback
+  - [x] Real-time validation as user types
 
 ### 3.4 Shared UI Components
 - [ ] **Create LoadingIndicator control**

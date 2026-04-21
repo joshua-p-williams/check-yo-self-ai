@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using CheckYoSelfAI.Services.Interfaces;
 using CheckYoSelfAI.Services;
+using CheckYoSelfAI.Views;
 
 namespace CheckYoSelfAI
 {
@@ -100,6 +101,7 @@ namespace CheckYoSelfAI
 
             // Main ViewModels (Phase 3)
             builder.Services.AddTransient<ViewModels.DocumentUploadViewModel>();
+            builder.Services.AddTransient<ViewModels.SettingsPageViewModel>();
 
             // Document processing ViewModels (will be created in later phases)
             // builder.Services.AddTransient<DocumentUploadViewModel>();
@@ -116,7 +118,7 @@ namespace CheckYoSelfAI
 
             // Main Views (will be created in Phase 3)
             // builder.Services.AddTransient<MainPage>();
-            // builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<SettingsPage>();
 
             // Document processing Views (will be created in later phases)
             // builder.Services.AddTransient<DocumentUploadPage>();
