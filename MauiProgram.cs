@@ -2,6 +2,7 @@
 using CheckYoSelfAI.Services.Interfaces;
 using CheckYoSelfAI.Services;
 using CheckYoSelfAI.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckYoSelfAI
 {
@@ -33,7 +34,9 @@ namespace CheckYoSelfAI
             // Configure Views
             ConfigureViews(builder);
 
-            return builder.Build();
+            var app = builder.Build();
+            ValidateServiceIntegration(app);
+            return app;
         }
 
         private static void ConfigureLogging(MauiAppBuilder builder)
@@ -42,6 +45,8 @@ namespace CheckYoSelfAI
 
 #if DEBUG
             builder.Logging.AddDebug();
+            builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+            builder.Logging.AddFilter("System", LogLevel.Warning);
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
 #else
             builder.Logging.SetMinimumLevel(LogLevel.Information);
@@ -59,27 +64,20 @@ namespace CheckYoSelfAI
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);
 
             // Document processing pipeline services
-            // Note: These will be implemented in future phases
-            // For now, we register the interfaces for dependency injection setup
-
-            // Document orchestration service (main pipeline coordinator)
-            // builder.Services.AddScoped<IDocumentOrchestrationService, DocumentOrchestrationService>();
-
-            // Classification service (document type identification)
-            // builder.Services.AddScoped<IDocumentClassifierService, DocumentClassifierService>();
-
-            // Check analysis service (US bank check processing)
-            // builder.Services.AddScoped<ICheckAnalyzerService, CheckAnalyzerService>();
-
-            // Deposit slip analysis service (custom neural models)
-            // builder.Services.AddScoped<IDepositSlipAnalyzerService, DepositSlipAnalyzerService>();
+            builder.Services.AddSingleton<IDocumentClassifierService, DocumentClassifierService>();
+            builder.Services.AddSingleton<ICheckAnalyzerService, CheckAnalyzerService>();
+            builder.Services.AddSingleton<IDepositSlipAnalyzerService, DepositSlipAnalyzerService>();
+            builder.Services.AddSingleton<IDocumentOrchestrationService, DocumentOrchestrationService>();
 
             // Settings and configuration services
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
-            // Navigation and image services (Phase 2)
+            // Navigation and image services
             builder.Services.AddSingleton<INavigationService, NavigationService>();
-            builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddSingleton<IImageService, ImageService>();
+
+            // Integration validation service
+            builder.Services.AddSingleton<IntegrationValidationService>();
 
             // Azure AI Document Intelligence client
             // This will be configured when we implement the actual services
@@ -116,21 +114,30 @@ namespace CheckYoSelfAI
             // Register Views as transient services
             // Views should be transient because they are tied to specific navigation instances
 
-            // Main Views (will be created in Phase 3)
-            // builder.Services.AddTransient<MainPage>();
+            // Main Views
+            builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<SettingsPage>();
 
             // Document processing Views (will be created in later phases)
             // builder.Services.AddTransient<DocumentUploadPage>();
             // builder.Services.AddTransient<DocumentResultsPage>();
 
-                }
+        }
 
-                private static void ConfigureShellRoutes()
-                {
-                    // Configure Shell navigation routes and parameters
-                    // This sets up additional navigation behaviors beyond what's defined in AppShell.xaml
-                    ShellRouteConfiguration.ConfigureRoutes();
-                }
+        private static void ConfigureShellRoutes()
+        {
+            // Configure Shell navigation routes and parameters
+            // This sets up additional navigation behaviors beyond what's defined in AppShell.xaml
+            ShellRouteConfiguration.ConfigureRoutes();
+        }
+
+        private static void ValidateServiceIntegration(MauiApp app)
+        {
+#if DEBUG
+            using var scope = app.Services.CreateScope();
+            var validator = scope.ServiceProvider.GetRequiredService<IntegrationValidationService>();
+            validator.ValidateAsync().GetAwaiter().GetResult();
+#endif
+        }
             }
 }

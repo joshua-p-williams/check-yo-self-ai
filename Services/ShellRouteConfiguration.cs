@@ -68,14 +68,14 @@ public static class ShellRouteConfiguration
         {
             // Primary Shell routes (from AppShell.xaml)
             { NavigationRoutes.Home, "MainPage (Home Tab)" },
-            { NavigationRoutes.Settings, "MainPage (Settings Tab)" },
+            { NavigationRoutes.Settings, "SettingsPage (Settings Tab)" },
 
             // Secondary routes (registered programmatically)
             { NavigationRoutes.DocumentCapture, "DocumentCapturePage (placeholder: MainPage)" },
             { NavigationRoutes.DocumentPreview, "DocumentPreviewPage (placeholder: MainPage)" },
             { NavigationRoutes.DocumentResults, "DocumentResultsPage (placeholder: MainPage)" },
             { NavigationRoutes.ProcessingStatus, "ProcessingStatusPage (placeholder: MainPage)" },
-            { NavigationRoutes.AzureSettings, "AzureSettingsPage (placeholder: MainPage)" },
+            { NavigationRoutes.AzureSettings, "SettingsPage" },
             { NavigationRoutes.AzureSetup, "AzureSetupPage (placeholder: MainPage)" },
             { NavigationRoutes.Help, "HelpPage (placeholder: MainPage)" },
             { NavigationRoutes.About, "AboutPage (placeholder: MainPage)" },
