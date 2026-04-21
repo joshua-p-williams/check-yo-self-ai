@@ -142,33 +142,33 @@
   - [x] Display current processing stage with animations
   - [x] Handle error states in timeline
 
-- [ ] **Create classification result card**
-  - [ ] Display identified document type with confidence
-  - [ ] Show alternative classification options
-  - [ ] Add confidence visualization (progress bars/colors)
-  - [ ] Include reasoning details when available
-  - [ ] Allow manual override for incorrect classification
+- [x] **Create classification result card**
+  - [x] Display identified document type with confidence
+  - [x] Show alternative classification options
+  - [x] Add confidence visualization (progress bars/colors)
+  - [x] Include reasoning details when available
+  - [x] Allow manual override for incorrect classification
 
-- [ ] **Create routed-model indicator**  
-  - [ ] Show which extraction model was selected
-  - [ ] Display model version and capabilities
-  - [ ] Indicate routing decision reasoning
-  - [ ] Show expected extraction fields for selected model
-  - [ ] Add link to model documentation
+- [x] **Create routed-model indicator**  
+  - [x] Show which extraction model was selected
+  - [x] Display model version and capabilities
+  - [x] Indicate routing decision reasoning
+  - [x] Show expected extraction fields for selected model
+  - [x] Add link to model documentation
 
-- [ ] **Create normalized result view**
-  - [ ] Design model-agnostic result display
-  - [ ] Support both check and deposit slip fields
-  - [ ] Show extracted values with confidence scores
-  - [ ] Add raw vs. formatted result toggle
-  - [ ] Include export and sharing capabilities
+- [x] **Create normalized result view**
+  - [x] Design model-agnostic result display
+  - [x] Support both check and deposit slip fields
+  - [x] Show extracted values with confidence scores
+  - [x] Add raw vs. formatted result toggle
+  - [x] Include export and sharing capabilities
 
-- [ ] **Create low-confidence / unsupported-document warning state**
-  - [ ] Design clear warning messaging
-  - [ ] Provide recovery options and suggestions
-  - [ ] Show confidence thresholds and explanations
-  - [ ] Add manual review workflow triggers
-  - [ ] Include fallback processing options
+- [x] **Create low-confidence / unsupported-document warning state**
+  - [x] Design clear warning messaging
+  - [x] Provide recovery options and suggestions
+  - [x] Show confidence thresholds and explanations
+  - [x] Add manual review workflow triggers
+  - [x] Include fallback processing options
 
 ### 3.3 Settings Page Implementation
 - [ ] **Create SettingsPage.xaml layout**

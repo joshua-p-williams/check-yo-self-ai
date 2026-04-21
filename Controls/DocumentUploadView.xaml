@@ -2,8 +2,10 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:CheckYoSelfAI.Controls"
+             xmlns:models="clr-namespace:CheckYoSelfAI.Models"
              xmlns:viewModels="clr-namespace:CheckYoSelfAI.ViewModels"
              x:Class="CheckYoSelfAI.Controls.DocumentUploadView"
+             x:Name="Root"
              x:DataType="viewModels:DocumentUploadViewModel">
 
     <VerticalStackLayout Spacing="16">
@@ -68,6 +70,29 @@
 
         <Border Padding="12"
                 IsVisible="{Binding HasSelectedImage}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Interactive Demo Flow"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Label Text="{Binding NextStepHint}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}" />
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Run Next Step"
+                            Command="{Binding ProcessNextStageCommand}" />
+                    <Button Grid.Column="1"
+                            Text="Run All Remaining"
+                            Command="{Binding ProcessAllStagesCommand}" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                IsVisible="{Binding HasSelectedImage}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Image Metadata"
                        FontAttributes="Bold"
@@ -91,6 +116,291 @@
 
                     <Label Grid.Row="4" Grid.Column="0" Text="Modified" FontAttributes="Bold" />
                     <Label Grid.Row="4" Grid.Column="1" Text="{Binding LastModifiedDisplay}" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                IsVisible="{Binding HasClassificationResult}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Classification Result"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="8">
+                    <Label Grid.Column="0"
+                           Text="{Binding ClassifiedDocumentTypeDisplay}"
+                           FontAttributes="Bold"
+                           FontSize="15" />
+                    <Label Grid.Column="1"
+                           Text="{Binding ClassificationConfidenceDisplay}"
+                           FontAttributes="Bold" />
+                </Grid>
+
+                <ProgressBar Progress="{Binding ClassificationConfidence}">
+                    <ProgressBar.Triggers>
+                        <DataTrigger TargetType="ProgressBar"
+                                     Binding="{Binding IsHighClassificationConfidence}"
+                                     Value="True">
+                            <Setter Property="ProgressColor"
+                                    Value="{StaticResource Tertiary}" />
+                        </DataTrigger>
+                        <DataTrigger TargetType="ProgressBar"
+                                     Binding="{Binding IsMediumClassificationConfidence}"
+                                     Value="True">
+                            <Setter Property="ProgressColor"
+                                    Value="{StaticResource Warning}" />
+                        </DataTrigger>
+                        <DataTrigger TargetType="ProgressBar"
+                                     Binding="{Binding IsLowClassificationConfidence}"
+                                     Value="True">
+                            <Setter Property="ProgressColor"
+                                    Value="{StaticResource Error}" />
+                        </DataTrigger>
+                    </ProgressBar.Triggers>
+                </ProgressBar>
+
+                <Label Text="{Binding ClassificationReasoningDetails}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}"
+                       IsVisible="{Binding HasClassificationReasoning}" />
+
+                <Label Text="Alternative options"
+                       FontAttributes="Bold"
+                       FontSize="13" />
+
+                <CollectionView ItemsSource="{Binding AlternativeClassificationOptions}"
+                                SelectionMode="None"
+                                HeightRequest="120">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:AlternativeClassification">
+                            <Border Padding="8"
+                                    Margin="0,2">
+                                <Grid ColumnDefinitions="*,Auto"
+                                      ColumnSpacing="8"
+                                      RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="{Binding DocumentType}"
+                                           FontAttributes="Bold" />
+                                    <Label Grid.Row="0"
+                                           Grid.Column="1"
+                                           Text="{Binding Confidence, StringFormat='{0:P1}'}" />
+                                    <Label Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="{Binding Reasoning}"
+                                           FontSize="11"
+                                           TextColor="{StaticResource Gray600}" />
+                                    <Button Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="Use"
+                                            Padding="8,4"
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.OverrideClassificationCommand}"
+                                            CommandParameter="{Binding DocumentType}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                IsVisible="{Binding HasRoutingDecision}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Routed Model"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="10">
+                    <Label Grid.Column="0" Text="Model" FontAttributes="Bold" />
+                    <Label Grid.Column="1" Text="{Binding RoutedModelId}" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Version" FontAttributes="Bold" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding RoutedModelVersion}" />
+                </Grid>
+
+                <Label Text="{Binding RoutingReasoning}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}"
+                       IsVisible="{Binding HasRoutingReasoning}" />
+
+                <Label Text="Capabilities"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       IsVisible="{Binding HasModelCapabilities}" />
+
+                <VerticalStackLayout Spacing="2"
+                                     BindableLayout.ItemsSource="{Binding RoutedModelCapabilities}"
+                                     IsVisible="{Binding HasModelCapabilities}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Label Text="{Binding StringFormat='• {0}'}"
+                                   FontSize="12" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Expected Fields"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       IsVisible="{Binding HasExpectedModelFields}" />
+
+                <FlexLayout Direction="Row"
+                            Wrap="Wrap"
+                            BindableLayout.ItemsSource="{Binding ExpectedModelFields}"
+                            IsVisible="{Binding HasExpectedModelFields}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Border Padding="6,4"
+                                    Margin="0,0,6,6"
+                                    BackgroundColor="{StaticResource Surface}">
+                                <Label Text="{Binding}"
+                                       FontSize="11" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Button Text="Open Model Documentation"
+                        Command="{Binding OpenModelDocumentationCommand}"
+                        IsVisible="{Binding HasModelDocumentationUrl}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                IsVisible="{Binding HasExtractedFields}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Extracted Values"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+                <Label Text="{Binding ExtractionConfidenceDisplay, StringFormat='Overall confidence: {0}'}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}" />
+
+                <CollectionView ItemsSource="{Binding ExtractedFieldItems}"
+                                SelectionMode="None"
+                                HeightRequest="220">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:ExtractedFieldDisplayItem">
+                            <Border Padding="8"
+                                    Margin="0,2">
+                                <VerticalStackLayout Spacing="2">
+                                    <Grid ColumnDefinitions="*,Auto"
+                                          ColumnSpacing="8">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding FieldName}"
+                                               FontAttributes="Bold"
+                                               FontSize="12" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding ConfidenceDisplay}"
+                                               FontSize="12" />
+                                    </Grid>
+                                    <Label Text="{Binding FieldValue}"
+                                           FontSize="12" />
+                                    <ProgressBar Progress="{Binding Confidence}" />
+                                    <Label Text="Low confidence"
+                                           FontSize="10"
+                                           TextColor="{StaticResource Error}"
+                                           IsVisible="{Binding IsLowConfidence}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                IsVisible="{Binding HasNormalizedResult}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Normalized Result"
+                       FontAttributes="Bold"
+                       FontSize="16" />
+                <Label Text="{Binding NormalizedSummary}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}" />
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="8">
+                    <Button Grid.Column="0"
+                            Text="{Binding NormalizedViewToggleText}"
+                            Command="{Binding ToggleNormalizedResultViewCommand}" />
+                    <Button Grid.Column="1"
+                            Text="Export JSON"
+                            Command="{Binding ExportNormalizedResultCommand}" />
+                </Grid>
+
+                <Button Text="Share Result"
+                        Command="{Binding ShareNormalizedResultCommand}" />
+
+                <CollectionView ItemsSource="{Binding NormalizedFieldItems}"
+                                SelectionMode="None"
+                                IsVisible="{Binding IsFormattedNormalizedView}"
+                                HeightRequest="220">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:NormalizedFieldDisplayItem">
+                            <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="8"
+                                  Padding="0,2">
+                                <Label Grid.Column="0"
+                                       Text="{Binding Label}"
+                                       FontAttributes="Bold"
+                                       FontSize="12" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Value}"
+                                       FontSize="12" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <ScrollView IsVisible="{Binding IsRawNormalizedView}"
+                            HeightRequest="220">
+                    <Label Text="{Binding RawNormalizedResult}"
+                           FontSize="11"
+                           LineBreakMode="WordWrap" />
+                </ScrollView>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Padding="12"
+                Stroke="{StaticResource Warning}"
+                IsVisible="{Binding HasProcessingWarning}">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{Binding WarningTitle}"
+                       TextColor="{StaticResource Warning}"
+                       FontAttributes="Bold"
+                       FontSize="15" />
+
+                <Label Text="{Binding WarningMessage}"
+                       FontSize="12" />
+
+                <Label Text="{Binding ConfidenceThresholdSummary}"
+                       FontSize="11"
+                       TextColor="{StaticResource Gray600}" />
+
+                <VerticalStackLayout Spacing="2"
+                                     BindableLayout.ItemsSource="{Binding WarningSuggestions}"
+                                     IsVisible="{Binding HasWarningSuggestions}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Label Text="{Binding StringFormat='• {0}'}"
+                                   FontSize="12" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="8">
+                    <Button Grid.Column="0"
+                            Text="Trigger Manual Review"
+                            Command="{Binding TriggerManualReviewCommand}" />
+                    <Button Grid.Column="1"
+                            Text="Try Fallback Model"
+                            Command="{Binding TryFallbackProcessingCommand}" />
                 </Grid>
             </VerticalStackLayout>
         </Border>
