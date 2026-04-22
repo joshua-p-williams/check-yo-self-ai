@@ -160,12 +160,15 @@ public class DocumentUploadViewModel : BaseViewModel
             if (SetProperty(ref _previewImageSource, value))
             {
                 OnPropertyChanged(nameof(HasSelectedImage));
+                OnPropertyChanged(nameof(ShowUploadActions));
                 RefreshCommandStates();
             }
         }
     }
 
     public bool HasSelectedImage => PreviewImageSource != null;
+
+    public bool ShowUploadActions => !HasSelectedImage;
 
     public string SelectedFileName
     {
@@ -506,6 +509,26 @@ public class DocumentUploadViewModel : BaseViewModel
         }
     }
 
+    public string NextStepActionText
+    {
+        get
+        {
+            if (!HasSelectedImage)
+            {
+                return "Run Next Step";
+            }
+
+            return _activePipelineStage switch
+            {
+                ProcessingPipelineStage.Classify => "Classify",
+                ProcessingPipelineStage.Route => "Route",
+                ProcessingPipelineStage.Extract => "Extract",
+                ProcessingPipelineStage.Normalize => "Normalize",
+                _ => "Complete"
+            };
+        }
+    }
+
     protected override void OnBusyChanged(bool isBusy)
     {
         base.OnBusyChanged(isBusy);
@@ -527,6 +550,7 @@ public class DocumentUploadViewModel : BaseViewModel
         TriggerManualReviewCommand.NotifyCanExecuteChanged();
         TryFallbackProcessingCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(NextStepHint));
+        OnPropertyChanged(nameof(NextStepActionText));
     }
 
     private bool CanProcessNextStage()

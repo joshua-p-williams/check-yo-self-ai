@@ -1,4 +1,5 @@
 using CheckYoSelfAI.ViewModels;
+using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,6 +18,7 @@ public partial class ProcessingTimelineView : ContentView
     private ProcessingTimelineStage? _compactCurrentStage;
     private ProcessingTimelineStage? _compactNextStage;
     private string _stageProgressSummary = "0/0 complete";
+    private double _stageProgressValue;
 
     public static readonly BindableProperty StagesProperty = BindableProperty.Create(
         nameof(Stages),
@@ -48,6 +50,60 @@ public partial class ProcessingTimelineView : ContentView
         typeof(string),
         typeof(ProcessingTimelineView),
         default(string));
+
+    public static readonly BindableProperty ShowDemoControlsProperty = BindableProperty.Create(
+        nameof(ShowDemoControls),
+        typeof(bool),
+        typeof(ProcessingTimelineView),
+        false);
+
+    public static readonly BindableProperty NextStepHintProperty = BindableProperty.Create(
+        nameof(NextStepHint),
+        typeof(string),
+        typeof(ProcessingTimelineView),
+        default(string));
+
+    public static readonly BindableProperty EmptyStateMessageProperty = BindableProperty.Create(
+        nameof(EmptyStateMessage),
+        typeof(string),
+        typeof(ProcessingTimelineView),
+        default(string));
+
+    public static readonly BindableProperty NextStepActionTextProperty = BindableProperty.Create(
+        nameof(NextStepActionText),
+        typeof(string),
+        typeof(ProcessingTimelineView),
+        "Run Next Step");
+
+    public static readonly BindableProperty ProcessNextStageCommandProperty = BindableProperty.Create(
+        nameof(ProcessNextStageCommand),
+        typeof(ICommand),
+        typeof(ProcessingTimelineView),
+        default(ICommand));
+
+    public static readonly BindableProperty ProcessAllStagesCommandProperty = BindableProperty.Create(
+        nameof(ProcessAllStagesCommand),
+        typeof(ICommand),
+        typeof(ProcessingTimelineView),
+        default(ICommand));
+
+    public static readonly BindableProperty ShowUploadControlsProperty = BindableProperty.Create(
+        nameof(ShowUploadControls),
+        typeof(bool),
+        typeof(ProcessingTimelineView),
+        false);
+
+    public static readonly BindableProperty CaptureImageCommandProperty = BindableProperty.Create(
+        nameof(CaptureImageCommand),
+        typeof(ICommand),
+        typeof(ProcessingTimelineView),
+        default(ICommand));
+
+    public static readonly BindableProperty SelectImageCommandProperty = BindableProperty.Create(
+        nameof(SelectImageCommand),
+        typeof(ICommand),
+        typeof(ProcessingTimelineView),
+        default(ICommand));
 
     public ProcessingTimelineView()
     {
@@ -126,6 +182,21 @@ public partial class ProcessingTimelineView : ContentView
         }
     }
 
+    public double StageProgressValue
+    {
+        get => _stageProgressValue;
+        private set
+        {
+            if (_stageProgressValue == value)
+            {
+                return;
+            }
+
+            _stageProgressValue = value;
+            OnPropertyChanged();
+        }
+    }
+
     public IEnumerable<ProcessingTimelineStage>? Stages
     {
         get => (IEnumerable<ProcessingTimelineStage>?)GetValue(StagesProperty);
@@ -155,6 +226,62 @@ public partial class ProcessingTimelineView : ContentView
         get => (string?)GetValue(ErrorMessageProperty);
         set => SetValue(ErrorMessageProperty, value);
     }
+
+    public bool ShowDemoControls
+    {
+        get => (bool)GetValue(ShowDemoControlsProperty);
+        set => SetValue(ShowDemoControlsProperty, value);
+    }
+
+    public string? NextStepHint
+    {
+        get => (string?)GetValue(NextStepHintProperty);
+        set => SetValue(NextStepHintProperty, value);
+    }
+
+    public string? EmptyStateMessage
+    {
+        get => (string?)GetValue(EmptyStateMessageProperty);
+        set => SetValue(EmptyStateMessageProperty, value);
+    }
+
+    public string NextStepActionText
+    {
+        get => (string)GetValue(NextStepActionTextProperty);
+        set => SetValue(NextStepActionTextProperty, value);
+    }
+
+    public ICommand? ProcessNextStageCommand
+    {
+        get => (ICommand?)GetValue(ProcessNextStageCommandProperty);
+        set => SetValue(ProcessNextStageCommandProperty, value);
+    }
+
+    public ICommand? ProcessAllStagesCommand
+    {
+        get => (ICommand?)GetValue(ProcessAllStagesCommandProperty);
+        set => SetValue(ProcessAllStagesCommandProperty, value);
+    }
+
+    public bool ShowUploadControls
+    {
+        get => (bool)GetValue(ShowUploadControlsProperty);
+        set => SetValue(ShowUploadControlsProperty, value);
+    }
+
+    public ICommand? CaptureImageCommand
+    {
+        get => (ICommand?)GetValue(CaptureImageCommandProperty);
+        set => SetValue(CaptureImageCommandProperty, value);
+    }
+
+    public ICommand? SelectImageCommand
+    {
+        get => (ICommand?)GetValue(SelectImageCommandProperty);
+        set => SetValue(SelectImageCommandProperty, value);
+    }
+
+    public bool ShowEmptyStateMessage => !HasCompactCurrentStage && !string.IsNullOrWhiteSpace(EmptyStateMessage);
 
     protected override void OnSizeAllocated(double width, double height)
     {
@@ -258,6 +385,7 @@ public partial class ProcessingTimelineView : ContentView
         }
 
         OnPropertyChanged(nameof(StageSnapshot));
+        OnPropertyChanged(nameof(ShowEmptyStateMessage));
         RecomputeCompactProjection();
     }
 
@@ -268,6 +396,8 @@ public partial class ProcessingTimelineView : ContentView
             CompactCurrentStage = null;
             CompactNextStage = null;
             StageProgressSummary = "0/0 complete";
+            StageProgressValue = 0;
+            OnPropertyChanged(nameof(ShowEmptyStateMessage));
             return;
         }
 
@@ -292,5 +422,20 @@ public partial class ProcessingTimelineView : ContentView
 
         var completedCount = _stageSnapshot.Count(stage => stage.IsCompleted);
         StageProgressSummary = $"{completedCount}/{_stageSnapshot.Count} complete";
+        StageProgressValue = _stageSnapshot.Count == 0
+            ? 0
+            : (double)completedCount / _stageSnapshot.Count;
+        OnPropertyChanged(nameof(ShowEmptyStateMessage));
+    }
+
+    private void OnDemoControlInvoked(object? sender, EventArgs e)
+    {
+        try
+        {
+            HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+        }
+        catch
+        {
+        }
     }
 }

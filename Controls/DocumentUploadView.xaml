@@ -10,32 +10,6 @@
 
     <VerticalStackLayout Spacing="16"
                          SemanticProperties.Description="Document upload and processing workflow">
-        <Label Text="Upload Document"
-               Style="{StaticResource Headline}"
-               HorizontalOptions="Start"
-               HorizontalTextAlignment="Start"
-               SemanticProperties.HeadingLevel="Level1" />
-
-        <Label Text="Capture a photo or choose an existing file. Supported formats: JPEG, PNG. Max file size: 10 MB."
-               FontSize="14" />
-
-        <Grid ColumnDefinitions="*,*"
-              ColumnSpacing="12">
-            <Button Grid.Column="0"
-                    x:Name="CaptureImageButton"
-                    Text="Capture Image"
-                    Command="{Binding CaptureImageCommand}"
-                    Clicked="OnActionInvoked"
-                    SemanticProperties.Description="Capture image"
-                    SemanticProperties.Hint="Opens the camera to capture a document image" />
-            <Button Grid.Column="1"
-                    x:Name="SelectFileButton"
-                    Text="Select File"
-                    Command="{Binding SelectImageCommand}"
-                    Clicked="OnActionInvoked"
-                    SemanticProperties.Description="Select image file"
-                    SemanticProperties.Hint="Opens the photo library to choose a document image" />
-        </Grid>
 
         <controls:LoadingIndicator IsActive="{Binding IsBusy}"
                                    Message="Processing..."
@@ -46,7 +20,15 @@
                                          CurrentStageText="{Binding CurrentProcessingStage}"
                                          HasCurrentStage="{Binding HasCurrentProcessingStage}"
                                          HasError="{Binding HasTimelineError}"
-                                         ErrorMessage="{Binding TimelineErrorMessage}" />
+                                         ErrorMessage="{Binding TimelineErrorMessage}"
+                                         ShowUploadControls="{Binding ShowUploadActions}"
+                                         ShowDemoControls="{Binding HasSelectedImage}"
+                                         EmptyStateMessage="Capture a photo or choose an existing file. Supported formats: JPEG, PNG. Max file size: 10 MB."
+                                         NextStepActionText="{Binding NextStepActionText}"
+                                         CaptureImageCommand="{Binding CaptureImageCommand}"
+                                         SelectImageCommand="{Binding SelectImageCommand}"
+                                         ProcessNextStageCommand="{Binding ProcessNextStageCommand}"
+                                         ProcessAllStagesCommand="{Binding ProcessAllStagesCommand}" />
 
         <controls:ErrorMessageView Message="{Binding TimelineErrorMessage}"
                                    Severity="Error"
@@ -88,35 +70,6 @@
                 Clicked="OnActionInvoked"
                 SemanticProperties.Description="Clear selected image"
                 SemanticProperties.Hint="Clears the selected image and resets processing state" />
-
-        <Border Padding="12"
-                IsVisible="{Binding HasSelectedImage}">
-            <VerticalStackLayout Spacing="10">
-                <Label Text="Interactive Demo Flow"
-                       FontAttributes="Bold"
-                       FontSize="16" />
-
-                <Label Text="{Binding NextStepHint}"
-                       FontSize="12"
-                       TextColor="{StaticResource Gray700}" />
-
-                <Grid ColumnDefinitions="*,*"
-                      ColumnSpacing="10">
-                    <Button Grid.Column="0"
-                            x:Name="RunNextStepButton"
-                            Text="Run Next Step"
-                            Command="{Binding ProcessNextStageCommand}"
-                            Clicked="OnActionInvoked"
-                            SemanticProperties.Description="Run next processing step" />
-                    <Button Grid.Column="1"
-                            x:Name="RunAllRemainingButton"
-                            Text="Run All Remaining"
-                            Command="{Binding ProcessAllStagesCommand}"
-                            Clicked="OnActionInvoked"
-                            SemanticProperties.Description="Run all remaining processing steps" />
-                </Grid>
-            </VerticalStackLayout>
-        </Border>
 
         <Border Padding="12"
                 IsVisible="{Binding HasSelectedImage}">

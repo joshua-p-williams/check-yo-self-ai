@@ -5,135 +5,101 @@
              x:Class="CheckYoSelfAI.Controls.ProcessingTimelineView"
              x:Name="Root">
 
-    <Border Padding="12">
-        <VerticalStackLayout Spacing="8">
-            <Grid ColumnDefinitions="*,Auto"
-                  ColumnSpacing="12">
-                <Label Grid.Column="0"
-                       Text="Processing Timeline"
+    <Border Padding="14"
+            StrokeShape="RoundRectangle 14"
+            Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource Gray900}}">
+        <VerticalStackLayout Spacing="10">
+            <VerticalStackLayout Spacing="4"
+                                 IsVisible="{Binding HasCompactCurrentStage, Source={x:Reference Root}}">
+                <ActivityIndicator IsRunning="{Binding HasCurrentStage, Source={x:Reference Root}}"
+                                   IsVisible="{Binding HasCurrentStage, Source={x:Reference Root}}"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center" />
+
+                <Label Text="{Binding CompactCurrentStage.Title, Source={x:Reference Root}}"
                        FontAttributes="Bold"
-                       FontSize="16" />
+                       FontSize="22"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="TailTruncation" />
+
+                <Label Text="{Binding CompactCurrentStage.Description, Source={x:Reference Root}}"
+                       FontSize="13"
+                       TextColor="{StaticResource Gray700}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <Label Text="{Binding EmptyStateMessage, Source={x:Reference Root}}"
+                   FontSize="13"
+                   HorizontalTextAlignment="Center"
+                   IsVisible="{Binding ShowEmptyStateMessage, Source={x:Reference Root}}" />
+
+            <ProgressBar Progress="{Binding StageProgressValue, Source={x:Reference Root}}"
+                         HeightRequest="8"
+                         ProgressColor="{StaticResource Primary}" />
+
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="8"
+                  IsVisible="{Binding HasCompactCurrentStage, Source={x:Reference Root}}">
+                <Label Grid.Column="0"
+                       Text="{Binding CompactCurrentStage.StatusText, Source={x:Reference Root}, StringFormat='Status: {0}'}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}" />
                 <Label Grid.Column="1"
+                       Text="{Binding CompactCurrentStage.DurationDisplay, Source={x:Reference Root}}"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Gray600}" />
+                <Label Grid.Column="2"
                        Text="{Binding StageProgressSummary, Source={x:Reference Root}}"
                        FontSize="12"
-                       TextColor="{StaticResource Gray600}"
-                       VerticalTextAlignment="Center" />
+                       TextColor="{StaticResource Gray600}" />
             </Grid>
 
-            <Grid ColumnDefinitions="Auto,*"
-                  ColumnSpacing="8"
-                  IsVisible="{Binding HasCurrentStage, Source={x:Reference Root}}">
-                <ActivityIndicator Grid.Column="0"
-                                   IsRunning="{Binding HasCurrentStage, Source={x:Reference Root}}"
-                                   IsVisible="{Binding HasCurrentStage, Source={x:Reference Root}}"
-                                   Color="{StaticResource Primary}" />
-                <Label Grid.Column="1"
-                       Text="{Binding CurrentStageText, Source={x:Reference Root}, StringFormat='Current: {0}'}"
-                       FontSize="13"
-                       VerticalTextAlignment="Center" />
-            </Grid>
+            <Border Padding="10"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariant}, Dark={StaticResource Gray800}}"
+                    IsVisible="{Binding ShowUploadControls, Source={x:Reference Root}}">
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Capture Image"
+                            Command="{Binding CaptureImageCommand, Source={x:Reference Root}}"
+                            Clicked="OnDemoControlInvoked"
+                            SemanticProperties.Description="Capture image"
+                            SemanticProperties.Hint="Opens the camera to capture a document image" />
+                    <Button Grid.Column="1"
+                            Text="Select File"
+                            Command="{Binding SelectImageCommand, Source={x:Reference Root}}"
+                            Clicked="OnDemoControlInvoked"
+                            SemanticProperties.Description="Select image file"
+                            SemanticProperties.Hint="Opens the photo library to choose a document image" />
+                </Grid>
+            </Border>
 
-            <CollectionView ItemsSource="{Binding StageSnapshot, Source={x:Reference Root}}"
-                            SelectionMode="None"
-                            HeightRequest="84"
-                            VerticalScrollBarVisibility="Never"
-                            HorizontalScrollBarVisibility="Never">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Horizontal"
-                                       ItemSpacing="8" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:ProcessingTimelineStage">
-                        <Border Padding="8,6"
-                                WidthRequest="148"
-                                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariant}, Dark={StaticResource Gray900}}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding IsInProgress}"
-                                             Value="True">
-                                    <Setter Property="Stroke"
-                                            Value="{StaticResource Primary}" />
-                                    <Setter Property="BackgroundColor"
-                                            Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding IsCompleted}"
-                                             Value="True">
-                                    <Setter Property="Stroke"
-                                            Value="{StaticResource Tertiary}" />
-                                    <Setter Property="BackgroundColor"
-                                            Value="{AppThemeBinding Light={StaticResource TertiaryLight}, Dark={StaticResource TertiaryDark}}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding IsFailed}"
-                                             Value="True">
-                                    <Setter Property="Stroke"
-                                            Value="{StaticResource Error}" />
-                                    <Setter Property="BackgroundColor"
-                                            Value="{AppThemeBinding Light=#FFEBEE, Dark=#5C1A1A}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-
-                            <Grid ColumnDefinitions="Auto,*"
-                                  RowDefinitions="Auto,Auto"
-                                  ColumnSpacing="6"
-                                  RowSpacing="2">
-                                <Grid Grid.RowSpan="2"
-                                      Grid.Column="0"
-                                      WidthRequest="22"
-                                      HeightRequest="22">
-                                    <Border Stroke="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"
-                                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="11" />
-                                        </Border.StrokeShape>
-                                    </Border>
-                                    <ActivityIndicator IsRunning="{Binding IsInProgress}"
-                                                       IsVisible="{Binding IsInProgress}"
-                                                       Color="{StaticResource Primary}" />
-                                    <Label Text="{Binding IndicatorText}"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           FontSize="11"
-                                           FontAttributes="Bold">
-                                        <Label.Triggers>
-                                            <DataTrigger TargetType="Label"
-                                                         Binding="{Binding IsInProgress}"
-                                                         Value="True">
-                                                <Setter Property="IsVisible"
-                                                        Value="False" />
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                    </Label>
-                                </Grid>
-
-                                <Label Grid.Row="0"
-                                       Grid.Column="1"
-                                       Text="{Binding Title}"
-                                       FontSize="13"
-                                       FontAttributes="Bold"
-                                       LineBreakMode="TailTruncation" />
-
-                                <Grid Grid.Row="1"
-                                      Grid.Column="1"
-                                      ColumnDefinitions="*,Auto"
-                                      ColumnSpacing="6">
-                                    <Label Grid.Column="0"
-                                           Text="{Binding StatusText}"
-                                           FontSize="11"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}"
-                                           LineBreakMode="TailTruncation" />
-                                    <Label Grid.Column="1"
-                                           Text="{Binding DurationDisplay}"
-                                           FontSize="11"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                                </Grid>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <Border Padding="10"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariant}, Dark={StaticResource Gray800}}"
+                    IsVisible="{Binding ShowDemoControls, Source={x:Reference Root}}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="{Binding NextStepActionText, Source={x:Reference Root}}"
+                                Command="{Binding ProcessNextStageCommand, Source={x:Reference Root}}"
+                                Clicked="OnDemoControlInvoked"
+                                SemanticProperties.Description="Run next processing step" />
+                        <Button Grid.Column="1"
+                                Text="Run All Remaining"
+                                Command="{Binding ProcessAllStagesCommand, Source={x:Reference Root}}"
+                                Clicked="OnDemoControlInvoked"
+                                SemanticProperties.Description="Run all remaining processing steps" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
             <Label Text="{Binding ErrorMessage, Source={x:Reference Root}}"
                    TextColor="{StaticResource Error}"

@@ -57,8 +57,6 @@ public partial class DocumentUploadView : ContentView
             this.FindByName<VisualElement>("CaptureImageButton"),
             this.FindByName<VisualElement>("SelectFileButton"),
             this.FindByName<VisualElement>("ClearSelectionButton"),
-            this.FindByName<VisualElement>("RunNextStepButton"),
-            this.FindByName<VisualElement>("RunAllRemainingButton"),
             this.FindByName<VisualElement>("OpenModelDocumentationButton"),
             this.FindByName<VisualElement>("ToggleNormalizedViewButton"),
             this.FindByName<VisualElement>("ExportJsonButton"),
