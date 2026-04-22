@@ -8,13 +8,8 @@
              x:Name="Root"
              x:DataType="viewModels:DocumentUploadViewModel">
 
-    <VerticalStackLayout Spacing="16"
-                         SemanticProperties.Description="Document upload and processing workflow">
-
-        <controls:LoadingIndicator IsActive="{Binding IsBusy}"
-                                   Message="Processing..."
-                                   IndicatorSize="28"
-                                   IndicatorColor="{StaticResource Primary}" />
+    <Grid SemanticProperties.Description="Document upload and processing workflow">
+        <VerticalStackLayout Spacing="16">
 
         <controls:ProcessingTimelineView Stages="{Binding ProcessingTimelineStages}"
                                          CurrentStageText="{Binding CurrentProcessingStage}"
@@ -413,7 +408,15 @@
                TextColor="{StaticResource Primary}"
                IsVisible="{Binding HasStatusMessage}"
                SemanticProperties.Description="Status message" />
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <controls:LoadingIndicator IsActive="{Binding IsBusy}"
+                                   Message="Processing..."
+                                   IndicatorSize="28"
+                                   IndicatorColor="{StaticResource Primary}"
+                                   ShowOverlay="True"
+                                   ZIndex="100" />
+    </Grid>
 </ContentView>
 
 

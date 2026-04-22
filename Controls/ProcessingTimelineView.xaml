@@ -12,11 +12,6 @@
         <VerticalStackLayout Spacing="10">
             <VerticalStackLayout Spacing="4"
                                  IsVisible="{Binding HasCompactCurrentStage, Source={x:Reference Root}}">
-                <ActivityIndicator IsRunning="{Binding HasCurrentStage, Source={x:Reference Root}}"
-                                   IsVisible="{Binding HasCurrentStage, Source={x:Reference Root}}"
-                                   Color="{StaticResource Primary}"
-                                   HorizontalOptions="Center" />
-
                 <Label Text="{Binding CompactCurrentStage.Title, Source={x:Reference Root}}"
                        FontAttributes="Bold"
                        FontSize="22"
