@@ -22,6 +22,17 @@ public class DocumentUploadViewModel : BaseViewModel
         Normalize
     }
 
+    private enum ResultPanel
+    {
+        UploadedImage,
+        ImageMetadata,
+        Classification,
+        Route,
+        Extract,
+        Normalize,
+        Warnings
+    }
+
     private static readonly ImageValidationOptions UploadValidationOptions = new()
     {
         MaxFileSizeBytes = 10 * 1024 * 1024,
@@ -63,6 +74,7 @@ public class DocumentUploadViewModel : BaseViewModel
     private string _warningTitle = string.Empty;
     private string _warningMessage = string.Empty;
     private bool _showProcessingWarning;
+    private ResultPanel _selectedResultPanel = ResultPanel.UploadedImage;
 
     public DocumentUploadViewModel(IImageService imageService, ILogger<DocumentUploadViewModel> logger)
         : base(logger)
@@ -84,6 +96,7 @@ public class DocumentUploadViewModel : BaseViewModel
         OpenModelDocumentationCommand = new AsyncRelayCommand(OpenModelDocumentationAsync, CanOpenModelDocumentation);
         TriggerManualReviewCommand = new RelayCommand(TriggerManualReview, () => HasProcessingWarning);
         TryFallbackProcessingCommand = new RelayCommand(ApplyFallbackRouting, () => HasProcessingWarning && ClassificationResult != null);
+        SelectResultTabCommand = new RelayCommand<string>(SelectResultTab, CanSelectResultTab);
 
         ProcessingTimelineStages =
         [
@@ -138,6 +151,8 @@ public class DocumentUploadViewModel : BaseViewModel
 
     public IRelayCommand TryFallbackProcessingCommand { get; }
 
+    public IRelayCommand<string> SelectResultTabCommand { get; }
+
     public ObservableCollection<ProcessingTimelineStage> ProcessingTimelineStages { get; }
 
     public ObservableCollection<AlternativeClassification> AlternativeClassificationOptions { get; }
@@ -169,6 +184,50 @@ public class DocumentUploadViewModel : BaseViewModel
     public bool HasSelectedImage => PreviewImageSource != null;
 
     public bool ShowUploadActions => !HasSelectedImage;
+
+    public bool ShowResultTabs => HasSelectedImage;
+
+    public bool HasUploadedImagePanel => HasSelectedImage;
+
+    public bool HasImageMetadataPanel => HasSelectedImage;
+
+    public bool HasClassificationPanel => HasClassificationResult;
+
+    public bool HasRoutePanel => HasRoutingDecision;
+
+    public bool HasExtractPanel => HasExtractedFields;
+
+    public bool HasNormalizePanel => HasNormalizedResult;
+
+    public bool HasWarningsPanel => HasProcessingWarning;
+
+    public bool IsUploadedImageSelected => _selectedResultPanel == ResultPanel.UploadedImage;
+
+    public bool IsImageMetadataSelected => _selectedResultPanel == ResultPanel.ImageMetadata;
+
+    public bool IsClassificationSelected => _selectedResultPanel == ResultPanel.Classification;
+
+    public bool IsRouteSelected => _selectedResultPanel == ResultPanel.Route;
+
+    public bool IsExtractSelected => _selectedResultPanel == ResultPanel.Extract;
+
+    public bool IsNormalizeSelected => _selectedResultPanel == ResultPanel.Normalize;
+
+    public bool IsWarningsSelected => _selectedResultPanel == ResultPanel.Warnings;
+
+    public bool IsUploadedImagePanelVisible => HasUploadedImagePanel && IsUploadedImageSelected;
+
+    public bool IsImageMetadataPanelVisible => HasImageMetadataPanel && IsImageMetadataSelected;
+
+    public bool IsClassificationPanelVisible => HasClassificationPanel && IsClassificationSelected;
+
+    public bool IsRoutePanelVisible => HasRoutePanel && IsRouteSelected;
+
+    public bool IsExtractPanelVisible => HasExtractPanel && IsExtractSelected;
+
+    public bool IsNormalizePanelVisible => HasNormalizePanel && IsNormalizeSelected;
+
+    public bool IsWarningsPanelVisible => HasWarningsPanel && IsWarningsSelected;
 
     public string SelectedFileName
     {
@@ -537,6 +596,8 @@ public class DocumentUploadViewModel : BaseViewModel
 
     private void RefreshCommandStates()
     {
+        EnsureValidSelectedResultPanel();
+
         CaptureImageCommand.NotifyCanExecuteChanged();
         SelectImageCommand.NotifyCanExecuteChanged();
         ClearImageCommand.NotifyCanExecuteChanged();
@@ -549,8 +610,140 @@ public class DocumentUploadViewModel : BaseViewModel
         OpenModelDocumentationCommand.NotifyCanExecuteChanged();
         TriggerManualReviewCommand.NotifyCanExecuteChanged();
         TryFallbackProcessingCommand.NotifyCanExecuteChanged();
+        SelectResultTabCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(NextStepHint));
         OnPropertyChanged(nameof(NextStepActionText));
+        OnPropertyChanged(nameof(ShowResultTabs));
+        OnPropertyChanged(nameof(HasUploadedImagePanel));
+        OnPropertyChanged(nameof(HasImageMetadataPanel));
+        OnPropertyChanged(nameof(HasClassificationPanel));
+        OnPropertyChanged(nameof(HasRoutePanel));
+        OnPropertyChanged(nameof(HasExtractPanel));
+        OnPropertyChanged(nameof(HasNormalizePanel));
+        OnPropertyChanged(nameof(HasWarningsPanel));
+        OnPropertyChanged(nameof(IsUploadedImageSelected));
+        OnPropertyChanged(nameof(IsImageMetadataSelected));
+        OnPropertyChanged(nameof(IsClassificationSelected));
+        OnPropertyChanged(nameof(IsRouteSelected));
+        OnPropertyChanged(nameof(IsExtractSelected));
+        OnPropertyChanged(nameof(IsNormalizeSelected));
+        OnPropertyChanged(nameof(IsWarningsSelected));
+        OnPropertyChanged(nameof(IsUploadedImagePanelVisible));
+        OnPropertyChanged(nameof(IsImageMetadataPanelVisible));
+        OnPropertyChanged(nameof(IsClassificationPanelVisible));
+        OnPropertyChanged(nameof(IsRoutePanelVisible));
+        OnPropertyChanged(nameof(IsExtractPanelVisible));
+        OnPropertyChanged(nameof(IsNormalizePanelVisible));
+        OnPropertyChanged(nameof(IsWarningsPanelVisible));
+    }
+
+    private void EnsureValidSelectedResultPanel()
+    {
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.UploadedImage;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.ImageMetadata;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.Classification;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.Route;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.Extract;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.Normalize;
+        if (CanDisplayPanel(_selectedResultPanel))
+        {
+            return;
+        }
+
+        _selectedResultPanel = ResultPanel.Warnings;
+    }
+
+    private bool CanDisplayPanel(ResultPanel panel)
+    {
+        return panel switch
+        {
+            ResultPanel.UploadedImage => HasUploadedImagePanel,
+            ResultPanel.ImageMetadata => HasImageMetadataPanel,
+            ResultPanel.Classification => HasClassificationPanel,
+            ResultPanel.Route => HasRoutePanel,
+            ResultPanel.Extract => HasExtractPanel,
+            ResultPanel.Normalize => HasNormalizePanel,
+            ResultPanel.Warnings => HasWarningsPanel,
+            _ => false
+        };
+    }
+
+    private bool CanSelectResultTab(string? tabKey)
+    {
+        if (string.IsNullOrWhiteSpace(tabKey))
+        {
+            return false;
+        }
+
+        return tabKey.Trim().ToLowerInvariant() switch
+        {
+            "image" => HasUploadedImagePanel,
+            "metadata" => HasImageMetadataPanel,
+            "classification" => HasClassificationPanel,
+            "route" => HasRoutePanel,
+            "extract" => HasExtractPanel,
+            "normalize" => HasNormalizePanel,
+            "warnings" => HasWarningsPanel,
+            _ => false
+        };
+    }
+
+    private void SelectResultTab(string? tabKey)
+    {
+        if (!CanSelectResultTab(tabKey))
+        {
+            return;
+        }
+
+        var selectedPanel = tabKey!.Trim().ToLowerInvariant() switch
+        {
+            "image" => ResultPanel.UploadedImage,
+            "metadata" => ResultPanel.ImageMetadata,
+            "classification" => ResultPanel.Classification,
+            "route" => ResultPanel.Route,
+            "extract" => ResultPanel.Extract,
+            "normalize" => ResultPanel.Normalize,
+            "warnings" => ResultPanel.Warnings,
+            _ => ResultPanel.UploadedImage
+        };
+
+        if (_selectedResultPanel == selectedPanel)
+        {
+            return;
+        }
+
+        _selectedResultPanel = selectedPanel;
+        RefreshCommandStates();
     }
 
     private bool CanProcessNextStage()
@@ -733,6 +926,7 @@ public class DocumentUploadViewModel : BaseViewModel
         }
 
         StatusMessage = $"Classification complete: {ClassifiedDocumentTypeDisplay} ({ClassificationConfidenceDisplay}).";
+        SelectResultTab("classification");
     }
 
     private void RunRoutingStage()
@@ -761,6 +955,7 @@ public class DocumentUploadViewModel : BaseViewModel
         OnPropertyChanged(nameof(HasExpectedModelFields));
 
         StatusMessage = $"Routing complete: {RoutedModelId} selected.";
+        SelectResultTab("route");
     }
 
     private void RunExtractionStage()
@@ -799,6 +994,7 @@ public class DocumentUploadViewModel : BaseViewModel
         OnPropertyChanged(nameof(HasExtractedFields));
 
         StatusMessage = $"Extraction complete with {ExtractionConfidenceDisplay} confidence.";
+        SelectResultTab("extract");
     }
 
     private void RunNormalizationStage()
@@ -822,6 +1018,7 @@ public class DocumentUploadViewModel : BaseViewModel
         OnPropertyChanged(nameof(HasNormalizedFields));
 
         StatusMessage = "Normalization complete. You can now review formatted or raw output and export/share results.";
+        SelectResultTab("normalize");
     }
 
     private static ProcessingPipelineStage? GetNextStage(ProcessingPipelineStage? currentStage)
@@ -1113,6 +1310,7 @@ public class DocumentUploadViewModel : BaseViewModel
     private void EvaluateWarningState()
     {
         WarningSuggestions.Clear();
+        var hadWarning = HasProcessingWarning;
 
         if (ClassificationResult == null)
         {
@@ -1141,6 +1339,10 @@ public class DocumentUploadViewModel : BaseViewModel
             WarningSuggestions.Add("Continue with routing and compare extracted confidence results.");
             WarningSuggestions.Add("Use fallback model if extraction quality is poor.");
             HasProcessingWarning = true;
+            if (!hadWarning)
+            {
+                SelectResultTab("warnings");
+            }
             return;
         }
 
@@ -1152,6 +1354,10 @@ public class DocumentUploadViewModel : BaseViewModel
             WarningSuggestions.Add("Trigger manual review for field-level verification.");
             WarningSuggestions.Add("Review low-confidence extracted fields before normalization export.");
             HasProcessingWarning = true;
+            if (!hadWarning)
+            {
+                SelectResultTab("warnings");
+            }
             return;
         }
 
@@ -1163,6 +1369,10 @@ public class DocumentUploadViewModel : BaseViewModel
             WarningSuggestions.Add("Inspect warnings and confidence thresholds.");
             WarningSuggestions.Add("Re-run with fallback model if needed.");
             HasProcessingWarning = true;
+            if (!hadWarning)
+            {
+                SelectResultTab("warnings");
+            }
             return;
         }
 

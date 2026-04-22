@@ -30,8 +30,134 @@
                                    IsDismissible="True"
                                    IsPersistent="False" />
 
+        <ScrollView Orientation="Horizontal"
+                    IsVisible="{Binding ShowResultTabs}"
+                    HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Image"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="image"
+                        IsEnabled="{Binding HasUploadedImagePanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsUploadedImageSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Metadata"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="metadata"
+                        IsEnabled="{Binding HasImageMetadataPanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsImageMetadataSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Classification"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="classification"
+                        IsEnabled="{Binding HasClassificationPanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsClassificationSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Route"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="route"
+                        IsEnabled="{Binding HasRoutePanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsRouteSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Extract"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="extract"
+                        IsEnabled="{Binding HasExtractPanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsExtractSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Normalize"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="normalize"
+                        IsEnabled="{Binding HasNormalizePanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsNormalizeSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Primary}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Warnings"
+                        Command="{Binding SelectResultTabCommand}"
+                        CommandParameter="warnings"
+                        IsEnabled="{Binding HasWarningsPanel}"
+                        Padding="10,6">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                                     Binding="{Binding IsWarningsSelected}"
+                                     Value="True">
+                            <Setter Property="BackgroundColor"
+                                    Value="{StaticResource Warning}" />
+                            <Setter Property="TextColor"
+                                    Value="White" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </HorizontalStackLayout>
+        </ScrollView>
+
         <Border Padding="12"
-                StrokeThickness="1">
+                StrokeThickness="1"
+                IsVisible="{Binding IsUploadedImagePanelVisible}">
             <Grid RowDefinitions="Auto,Auto">
                 <Label Grid.Row="0"
                        Text="No image selected"
@@ -67,7 +193,7 @@
                 SemanticProperties.Hint="Clears the selected image and resets processing state" />
 
         <Border Padding="12"
-                IsVisible="{Binding HasSelectedImage}">
+                IsVisible="{Binding IsImageMetadataPanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Image Metadata"
                        FontAttributes="Bold"
@@ -96,7 +222,7 @@
         </Border>
 
         <Border Padding="12"
-                IsVisible="{Binding HasClassificationResult}">
+                IsVisible="{Binding IsClassificationPanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Classification Result"
                        FontAttributes="Bold"
@@ -183,7 +309,7 @@
         </Border>
 
         <Border Padding="12"
-                IsVisible="{Binding HasRoutingDecision}">
+                IsVisible="{Binding IsRoutePanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Routed Model"
                        FontAttributes="Bold"
@@ -250,7 +376,7 @@
         </Border>
 
         <Border Padding="12"
-                IsVisible="{Binding HasExtractedFields}">
+                IsVisible="{Binding IsExtractPanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Extracted Values"
                        FontAttributes="Bold"
@@ -293,7 +419,7 @@
         </Border>
 
         <Border Padding="12"
-                IsVisible="{Binding HasNormalizedResult}">
+                IsVisible="{Binding IsNormalizePanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="Normalized Result"
                        FontAttributes="Bold"
@@ -356,7 +482,7 @@
 
         <Border Padding="12"
                 Stroke="{StaticResource Warning}"
-                IsVisible="{Binding HasProcessingWarning}">
+                IsVisible="{Binding IsWarningsPanelVisible}">
             <VerticalStackLayout Spacing="8">
                 <Label Text="{Binding WarningTitle}"
                        TextColor="{StaticResource Warning}"
