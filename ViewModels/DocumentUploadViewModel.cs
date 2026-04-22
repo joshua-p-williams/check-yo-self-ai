@@ -761,6 +761,15 @@ public class DocumentUploadViewModel : BaseViewModel
         return CanProcessNextStage();
     }
 
+    private bool HasRemainingPipelineStages()
+    {
+        return HasSelectedImage
+            && _activePipelineStage is ProcessingPipelineStage.Classify
+                or ProcessingPipelineStage.Route
+                or ProcessingPipelineStage.Extract
+                or ProcessingPipelineStage.Normalize;
+    }
+
     private bool CanOverrideClassification(DocumentType type)
     {
         return IsNotBusy
@@ -835,7 +844,7 @@ public class DocumentUploadViewModel : BaseViewModel
     {
         await ExecuteWithBusyAsync(async _ =>
         {
-            while (CanProcessAllStages())
+            while (HasRemainingPipelineStages())
             {
                 await Task.Delay(250);
                 await AdvancePipelineStageAsync();
