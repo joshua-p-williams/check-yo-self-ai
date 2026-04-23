@@ -28,6 +28,7 @@
 - **Settings**: Persisted via `SettingsService` using MAUI Preferences API
 - **Image handling**: Use `ImageService` for all image operations
 - **Navigation**: Use `NavigationService` abstraction, not direct Shell calls
+- **Asset Workflow**: Prefer a MAUI-first asset workflow; avoid platform-specific asset-pack integration approaches.
 
 ## Data Flow Example
 1. User uploads image (MainPage → ImageService)
