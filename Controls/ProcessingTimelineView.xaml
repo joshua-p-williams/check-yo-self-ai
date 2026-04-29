@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CheckYoSelfAI.ViewModels"
+             x:Class="CheckYoSelfAI.Controls.ProcessingTimelineView"
+             x:Name="Root">
+
+    <Border Padding="14"
+            StrokeShape="RoundRectangle 14"
+            Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource Gray900}}">
+        <VerticalStackLayout Spacing="10">
+            <VerticalStackLayout Spacing="4"
+                                 IsVisible="{Binding HasCompactCurrentStage, Source={x:Reference Root}}">
+                <Label Text="{Binding CompactCurrentStage.Title, Source={x:Reference Root}}"
+                       FontAttributes="Bold"
+                       FontSize="22"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="TailTruncation" />
+
+                <Label Text="{Binding CompactCurrentStage.Description, Source={x:Reference Root}}"
+                       FontSize="13"
+                       TextColor="{StaticResource Gray700}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <Label Text="{Binding EmptyStateMessage, Source={x:Reference Root}}"
+                   FontSize="13"
+                   HorizontalTextAlignment="Center"
+                   IsVisible="{Binding ShowEmptyStateMessage, Source={x:Reference Root}}" />
+
+            <ProgressBar Progress="{Binding StageProgressValue, Source={x:Reference Root}}"
+                         HeightRequest="8"
+                         ProgressColor="{StaticResource Primary}" />
+
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="8"
+                  IsVisible="{Binding HasCompactCurrentStage, Source={x:Reference Root}}">
+                <Label Grid.Column="0"
+                       Text="{Binding CompactCurrentStage.StatusText, Source={x:Reference Root}, StringFormat='Status: {0}'}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray700}" />
+                <Label Grid.Column="1"
+                       Text="{Binding CompactCurrentStage.DurationDisplay, Source={x:Reference Root}}"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Gray600}" />
+                <Label Grid.Column="2"
+                       Text="{Binding StageProgressSummary, Source={x:Reference Root}}"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray600}" />
+            </Grid>
+
+            <Border Padding="10"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariant}, Dark={StaticResource Gray800}}"
+                    IsVisible="{Binding ShowUploadControls, Source={x:Reference Root}}">
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Capture Image"
+                            Command="{Binding CaptureImageCommand, Source={x:Reference Root}}"
+                            Clicked="OnDemoControlInvoked"
+                            SemanticProperties.Description="Capture image"
+                            SemanticProperties.Hint="Opens the camera to capture a document image" />
+                    <Button Grid.Column="1"
+                            Text="Select File"
+                            Command="{Binding SelectImageCommand, Source={x:Reference Root}}"
+                            Clicked="OnDemoControlInvoked"
+                            SemanticProperties.Description="Select image file"
+                            SemanticProperties.Hint="Opens the photo library to choose a document image" />
+                </Grid>
+            </Border>
+
+            <Border Padding="10"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariant}, Dark={StaticResource Gray800}}"
+                    IsVisible="{Binding ShowDemoControls, Source={x:Reference Root}}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="{Binding NextStepActionText, Source={x:Reference Root}}"
+                                Command="{Binding ProcessNextStageCommand, Source={x:Reference Root}}"
+                                Clicked="OnDemoControlInvoked"
+                                SemanticProperties.Description="Run next processing step" />
+                        <Button Grid.Column="1"
+                                Text="Run All Remaining"
+                                Command="{Binding ProcessAllStagesCommand, Source={x:Reference Root}}"
+                                Clicked="OnDemoControlInvoked"
+                                SemanticProperties.Description="Run all remaining processing steps" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage, Source={x:Reference Root}}"
+                   TextColor="{StaticResource Error}"
+                   IsVisible="{Binding HasError, Source={x:Reference Root}}"
+                   FontSize="12" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

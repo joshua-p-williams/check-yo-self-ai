@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Shell Navigation Styles for consistent appearance across platforms -->
+
+    <!-- Base Shell styling -->
+    <Style x:Key="ShellBaseStyle" TargetType="Shell">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource White}" />
+        <Setter Property="Shell.TitleColor" Value="{StaticResource White}" />
+        <Setter Property="Shell.DisabledColor" Value="{StaticResource Gray400}" />
+        <Setter Property="Shell.UnselectedColor" Value="{StaticResource Gray300}" />
+    </Style>
+
+    <!-- Tab Bar styling for document processing theme -->
+    <Style x:Key="DocumentTabBarStyle" TargetType="TabBar">
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource Gray500}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource OnBackground}" />
+        <Setter Property="Shell.TabBarDisabledColor" Value="{StaticResource Gray400}" />
+    </Style>
+
+    <!-- Individual Tab styling -->
+    <Style x:Key="DocumentTabStyle" TargetType="Tab">
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource Gray500}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource OnSurface}" />
+    </Style>
+
+    <!-- Shell Content styling for consistent page appearance -->
+    <Style x:Key="DocumentShellContentStyle" TargetType="ShellContent">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource Background}" />
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource OnBackground}" />
+        <Setter Property="Shell.TitleColor" Value="{StaticResource Primary}" />
+    </Style>
+
+    <!-- Navigation transitions for smooth user experience -->
+    <Style x:Key="DocumentNavigationStyle" TargetType="Element">
+        <Setter Property="Shell.PresentationMode" Value="Animated" />
+        <Setter Property="Shell.NavBarHasShadow" Value="True" />
+        <Setter Property="Shell.NavBarIsVisible" Value="True" />
+    </Style>
+
+    <!-- Flyout styling (for future use if needed) -->
+    <Style x:Key="DocumentFlyoutStyle" TargetType="FlyoutItem">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource OnSurface}" />
+        <Setter Property="Shell.TitleColor" Value="{StaticResource Primary}" />
+    </Style>
+
+</ResourceDictionary>

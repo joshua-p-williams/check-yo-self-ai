@@ -3,7 +3,7 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace check_yo_self_ai.WinUI
+namespace CheckYoSelfAI.WinUI
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

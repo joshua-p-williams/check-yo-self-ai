@@ -5,27 +5,58 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <!-- Document Processing Theme Colors -->
+    <Color x:Key="Primary">#2196F3</Color><!-- Blue - Professional, trustworthy -->
+    <Color x:Key="PrimaryDark">#1976D2</Color><!-- Darker blue for elevated surfaces -->
+    <Color x:Key="PrimaryLight">#BBDEFB</Color><!-- Light blue for backgrounds -->
+    <Color x:Key="PrimaryDarkText">#0D47A1</Color><!-- Dark blue for text on light backgrounds -->
+    <Color x:Key="MidnightBlue">#191970</Color><!-- Deep blue for headlines and important text -->
 
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
+    <Color x:Key="Secondary">#FF9800</Color><!-- Orange - Action, important elements -->
+    <Color x:Key="SecondaryDark">#F57C00</Color><!-- Darker orange -->
+    <Color x:Key="SecondaryLight">#FFE0B2</Color><!-- Light orange -->
+    <Color x:Key="SecondaryDarkText">#E65100</Color><!-- Dark orange for text -->
 
-    <Color x:Key="Gray100">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Tertiary">#4CAF50</Color><!-- Green - Success, positive actions -->
+    <Color x:Key="TertiaryDark">#388E3C</Color><!-- Darker green -->
+    <Color x:Key="TertiaryLight">#C8E6C9</Color><!-- Light green -->
+
+    <!-- Accent Colors -->
+    <Color x:Key="Magenta">#E91E63</Color><!-- Material Design Pink/Magenta - For tab highlights and accents -->
+
+    <!-- Status Colors -->
+    <Color x:Key="Success">#4CAF50</Color><!-- Green for success states -->
+    <Color x:Key="Warning">#FF9800</Color><!-- Orange for warnings -->
+    <Color x:Key="Error">#F44336</Color><!-- Red for errors -->
+    <Color x:Key="Info">#2196F3</Color><!-- Blue for informational -->
+
+    <!-- Neutral Colors -->
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="OffBlack">#1C1C1C</Color>
+    <Color x:Key="OffWhite">#FAFAFA</Color>
+
+    <!-- Background Colors -->
+    <Color x:Key="Background">#FFFFFF</Color><!-- Main background -->
+    <Color x:Key="Surface">#F5F5F5</Color><!-- Card/container backgrounds -->
+    <Color x:Key="SurfaceVariant">#EEEEEE</Color><!-- Alternative surface -->
+
+    <!-- Text Colors -->
+    <Color x:Key="OnBackground">#212121</Color><!-- Primary text on background -->
+    <Color x:Key="OnSurface">#424242</Color><!-- Primary text on surface -->
+    <Color x:Key="OnSurfaceVariant">#757575</Color><!-- Secondary text -->
+
+    <!-- Existing grays (keeping for compatibility) -->
+    <Color x:Key="Gray100">#F5F5F5</Color>
+    <Color x:Key="Gray200">#EEEEEE</Color>
+    <Color x:Key="Gray300">#E0E0E0</Color>
+    <Color x:Key="Gray400">#BDBDBD</Color>
+    <Color x:Key="Gray500">#9E9E9E</Color>
+    <Color x:Key="Gray600">#757575</Color>
+    <Color x:Key="Gray700">#616161</Color>
+    <Color x:Key="Gray800">#424242</Color>
     <Color x:Key="Gray900">#212121</Color>
-    <Color x:Key="Gray950">#141414</Color>
+    <Color x:Key="Gray950">#121212</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
@@ -39,6 +70,8 @@
     <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
     <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
+    <SolidColorBrush x:Key="Gray700Brush" Color="{StaticResource Gray700}"/>
+    <SolidColorBrush x:Key="Gray800Brush" Color="{StaticResource Gray800}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
 </ResourceDictionary>

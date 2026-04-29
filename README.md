@@ -31,21 +31,114 @@ This application provides an intuitive interface for users to upload images of f
 
 ## Architecture
 
-The application follows a clean MVVM architecture pattern with:
+The application follows a clean MVVM architecture pattern with dependency injection:
 
-- **Views**: XAML-based UI with platform-specific customizations
-- **ViewModels**: Business logic and data binding
-- **Services**: Azure AI integration and settings management
-- **Models**: Data transfer objects for document analysis results
+- **Views/Controls**: XAML pages and reusable controls for upload, timeline, and results
+- **ViewModels**: Command-driven UI logic and workflow orchestration
+- **Services**: Abstracted platform and domain services (`ImageService`, `SettingsService`, `NavigationService`, document pipeline services)
+- **Models**: DTOs and normalized result types for check/deposit-slip processing
+
+Service contracts are defined under `Services/Interfaces`, and concrete implementations are registered in `MauiProgram.cs`.
 
 ## Getting Started
 
 1. Clone this repository
 2. Open `check-yo-self-ai.sln` in Visual Studio
 3. Restore NuGet packages
-4. Set your target platform and run the application
-5. Configure your Azure AI credentials in the settings screen
-6. Upload a check or deposit slip image and start processing!
+4. Set a target platform (`Windows`, `Android`, `iOS`, or `macOS`) and run the application
+5. Open the **Settings** tab and configure:
+   - Azure endpoint URL
+   - Azure API key (stored in secure storage)
+   - Azure region
+6. Use the **Home** tab to capture/select an image, then run the guided document pipeline
+
+## Troubleshooting
+
+For common setup and runtime issues, see [docs/troubleshooting.md](docs/troubleshooting.md).
+
+Common quick checks:
+- Confirm the MAUI workload and `.NET 10` SDK are installed.
+- Verify Azure endpoint/key/region values in `Settings`.
+- Ensure camera/photo permissions are granted on device platforms.
+- Run `dotnet test Tests/CheckYoSelfAI.Tests.csproj` to validate core flows.
+
+## Testing
+
+### Unit tests (current default in CI-friendly workflows)
+
+The test project is located at `Tests/CheckYoSelfAI.Tests.csproj`.
+
+Run all tests:
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj
+```
+
+Run with coverage collector settings:
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj --settings Tests/coverage.runsettings
+```
+
+### UI tests (Appium-based)
+
+UI tests are scaffolded under `Tests/UI/` and currently marked to skip unless you intentionally enable and run them with an Appium environment.
+
+#### 1) Install Appium 2 and driver
+
+```powershell
+npm install -g appium
+appium driver install windows
+```
+
+#### 2) Start Appium server
+
+```powershell
+appium
+```
+
+#### 3) Set environment variables
+
+At minimum (if running `dotnet test` directly):
+
+```powershell
+$env:UI_TEST_PLATFORM="Windows"
+$env:UI_TEST_APPIUM_SERVER="http://127.0.0.1:4723"
+$env:UI_TEST_APP_ID="<your app id or executable path>"
+```
+
+Optional:
+
+```powershell
+$env:UI_TEST_DEVICE="WindowsPC"
+$env:UI_TEST_AUTOMATION="Windows"
+```
+
+#### 4) Run only UI-category tests
+
+```powershell
+dotnet test Tests/CheckYoSelfAI.Tests.csproj --filter "Category=UI"
+```
+
+or use helper script (recommended):
+
+```powershell
+./Tests/UI/run-ui-tests.ps1 -Platform Windows -AppiumServer "http://127.0.0.1:4723"
+```
+
+`run-ui-tests.ps1` can auto-detect `UI_TEST_APP_ID` by finding the latest built `check-yo-self-ai.exe` under `bin/Debug` or `bin/Release`.
+
+If auto-detection fails, either build the app first or pass `-AppId` explicitly:
+
+```powershell
+./Tests/UI/run-ui-tests.ps1 -Platform Windows -AppId "C:\path\to\check-yo-self-ai.exe"
+```
+
+### CI/CD guidance
+
+- Keep normal CI pipelines running `dotnet test` without requiring Appium.
+- Run UI tests in a separate pipeline/job that provisions Appium + target device/emulator.
+- This separation keeps automated unit-test validation stable while allowing UI automation expansion later.
 
 ## Project Structure
 
@@ -72,6 +165,9 @@ Comprehensive documentation is available in the `docs/` folder:
 - [Architecture Definition](docs/architecture-definition.md)
 - [Product Definition](docs/product-definition.md)
 - [Feature Specifications](docs/features/)
+- [Troubleshooting Guide](docs/troubleshooting.md)
+- [Service/API Reference](docs/api-reference.md)
+- [Boilerplate UI Feature Status](docs/features/boilerplate-ui/status.md)
 
 ## Technologies Used
 

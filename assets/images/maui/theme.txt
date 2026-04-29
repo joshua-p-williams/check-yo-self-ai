@@ -1,0 +1,8 @@
+CheckYoSelfAI MAUI Theme
+========================
+Primary color: #0B3C5D
+Accent color: #14B8C5
+Splash background color: #0B3C5D
+Suggested light surface: #F7F9FB
+Suggested dark surface: #121417
+Suggested text on primary: #F7FAFC

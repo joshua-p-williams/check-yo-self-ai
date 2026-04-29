@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace check_yo_self_ai
+namespace CheckYoSelfAI
 {
     [Application]
     public class MainApplication : MauiApplication

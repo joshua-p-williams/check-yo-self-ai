@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <!-- Android-specific Shell styling for better native appearance -->
+
+    <!-- Tab bar styling for Material Design compliance -->
+    <style name="TabbedPageStyle" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+
+        <!-- Tab bar specific styling -->
+        <item name="tabBackground">@color/colorSurface</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabSelectedTextColor">@color/colorPrimary</item>
+        <item name="tabTextColor">@color/colorOnSurface</item>
+
+        <!-- Elevation and shadows for material design -->
+        <item name="elevation">4dp</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+    </style>
+
+    <!-- Bottom navigation styling -->
+    <style name="BottomNavigationStyle">
+        <item name="android:background">@color/colorSurface</item>
+        <item name="itemIconTint">@drawable/bottom_nav_icon_selector</item>
+        <item name="itemTextColor">@drawable/bottom_nav_text_selector</item>
+        <item name="elevation">8dp</item>
+    </style>
+</resources>

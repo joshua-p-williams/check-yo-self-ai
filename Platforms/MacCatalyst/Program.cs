@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace check_yo_self_ai
+namespace CheckYoSelfAI
 {
     public class Program
     {
